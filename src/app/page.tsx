@@ -1,5 +1,14 @@
-import { redirect } from "next/navigation";
-
 export default function Home() {
-  redirect("/dashboard");
+  return (
+    <main className="min-h-screen flex items-center justify-center bg-slate-950 text-slate-50">
+      <div className="max-w-xl w-full px-4">
+        <h1 className="text-3xl font-bold mb-4">
+          Rasparin - Salpicadero
+        </h1>
+        <p className="text-sm text-slate-300 mb-6">
+          Estás viendo la app en <strong>localhost</strong> sin conexión a base de datos.
+        </p>
+      </div>
+    </main>
+  );
 }
