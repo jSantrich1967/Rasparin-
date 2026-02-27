@@ -30,7 +30,14 @@ Copia `.env.example` a `.env` y ajusta:
 - `APP_USERNAME` / `APP_PASSWORD`
 
 ### 2) Base de datos (PostgreSQL)
-Hay un `docker-compose.yml` listo.
+
+Puedes usar Postgres local (Docker) o un proveedor como **Neon**.
+
+**Neon recomendado (Vercel):** usa dos URLs:
+- `DATABASE_URL` (puede ser pooler)
+- `DIRECT_URL` (direct connection, sin pooler) para migraciones Prisma
+
+Hay un `docker-compose.yml` listo para DB local si lo prefieres.
 
 1. Asegúrate de tener **Docker Desktop** corriendo.
 2. Levanta la DB:
