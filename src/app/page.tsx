@@ -8,6 +8,12 @@ export default function Home() {
         <p className="text-sm text-slate-300 mb-6">
           Bienvenido al panel de control de Rasparina.
         </p>
+        <a
+          href="/dashboard"
+          className="inline-block bg-white text-slate-950 px-4 py-2 rounded-md font-medium text-sm hover:bg-slate-200 transition-colors"
+        >
+          Ir al Panel de Control
+        </a>
       </div>
     </main>
   );
