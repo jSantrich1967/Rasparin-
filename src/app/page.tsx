@@ -6,7 +6,7 @@ export default function Home() {
           Rasparin - Salpicadero
         </h1>
         <p className="text-sm text-slate-300 mb-6">
-          Estás viendo la app en <strong>localhost</strong> sin conexión a base de datos.
+          Bienvenido al panel de control de Rasparina.
         </p>
       </div>
     </main>
