@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { PaymentForm } from "./PaymentForm";
+import { PaymentRow } from "./PaymentRow";
 import { formatVES } from "@/lib/money";
 
 async function createPayment(formData: FormData): Promise<{ ok: true } | { ok: false; message: string }> {
@@ -38,6 +39,20 @@ async function createPayment(formData: FormData): Promise<{ ok: true } | { ok: f
   }
 }
 
+async function deletePayment(id: string): Promise<{ ok: true } | { ok: false; message: string }> {
+  "use server";
+  if (!id) return { ok: false, message: "ID requerido" };
+  try {
+    await prisma.payment.delete({ where: { id } });
+    revalidatePath("/dashboard/payments");
+    revalidatePath("/dashboard/reconciliation");
+    revalidatePath("/dashboard");
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, message: e instanceof Error ? e.message : "Error al eliminar" };
+  }
+}
+
 export default async function PaymentsPage() {
   const [payments, cards] = await Promise.all([
     prisma.payment.findMany({
@@ -54,20 +69,9 @@ export default async function PaymentsPage() {
       <p className="text-sm text-slate-600 mb-4">Pagos en VES a la tarjeta. Luego concilia en la pestaña Conciliación.</p>
       <PaymentForm createAction={createPayment} cards={cards} />
       <ul className="mt-6 space-y-2">
-        {payments.map((p) => {
-          const allocated = p.allocations.reduce((acc, a) => acc + Number(a.amountVESApplied), 0);
-          const remaining = Number(p.amountVES) - allocated;
-          return (
-            <li key={p.id} className="flex flex-wrap justify-between items-center py-2 border-b border-slate-200 text-sm">
-              <span className="font-mono">{new Date(p.date).toISOString().slice(0, 10)}</span>
-              <span>{p.card.alias} ({p.card.bank?.name})</span>
-              <span>{formatVES(p.amountVES.toString())} VES</span>
-              <span className="text-slate-500">Asignado: {formatVES(allocated)}</span>
-              <span className={remaining > 0 ? "text-amber-600" : "text-green-600"}>Restante: {formatVES(remaining)}</span>
-              <Link href={`/dashboard/reconciliation?payment=${p.id}`} className="text-slate-600 hover:underline">Conciliar</Link>
-            </li>
-          );
-        })}
+        {payments.map((p) => (
+          <PaymentRow key={p.id} payment={p} deleteAction={deletePayment} />
+        ))}
       </ul>
       <p className="mt-4 text-sm">
         <Link href="/dashboard" className="text-slate-600 hover:underline">← Volver al Resumen</Link>

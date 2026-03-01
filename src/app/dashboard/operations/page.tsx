@@ -2,8 +2,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { OperationForm } from "./OperationForm";
-import { formatUSD, formatVES } from "@/lib/money";
-import { calcDebtVES } from "@/lib/calc";
+import { OperationRow } from "./OperationRow";
 
 async function createOperation(formData: FormData): Promise<{ ok: true } | { ok: false; message: string }> {
   "use server";
@@ -46,6 +45,19 @@ async function createOperation(formData: FormData): Promise<{ ok: true } | { ok:
   }
 }
 
+async function deleteOperation(id: string): Promise<{ ok: true } | { ok: false; message: string }> {
+  "use server";
+  if (!id) return { ok: false, message: "ID requerido" };
+  try {
+    await prisma.operation.delete({ where: { id } });
+    revalidatePath("/dashboard/operations");
+    revalidatePath("/dashboard");
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, message: e instanceof Error ? e.message : "No se puede eliminar (¿tiene conciliaciones asignadas?)" };
+  }
+}
+
 export default async function OperationsPage({
   searchParams,
 }: {
@@ -83,19 +95,9 @@ export default async function OperationsPage({
         <Link href={cardId ? `/dashboard/operations?card=${cardId}&status=SETTLED` : "/dashboard/operations?status=SETTLED"} className="px-2 py-1 rounded border text-sm hover:bg-slate-100">SETTLED</Link>
       </div>
       <ul className="mt-4 space-y-2">
-        {operations.map((op) => {
-          const debtVES = calcDebtVES({ usdCharged: op.usdCharged.toString(), bcvRateOnCharge: op.bcvRateOnCharge.toString() });
-          return (
-            <li key={op.id} className="flex flex-wrap justify-between items-center py-2 border-b border-slate-200 text-sm">
-              <span className="font-mono">{new Date(op.date).toISOString().slice(0, 10)}</span>
-              <span>{op.card.alias} ({op.card.bank?.name})</span>
-              <span>{op.counterparty.name}</span>
-              <span>{formatUSD(op.usdCharged.toString())}</span>
-              <span>{formatVES(debtVES)} VES</span>
-              <span className={`font-medium ${op.status === "OPEN" ? "text-amber-600" : op.status === "SETTLED" ? "text-green-600" : "text-slate-500"}`}>{op.status}</span>
-            </li>
-          );
-        })}
+        {operations.map((op) => (
+          <OperationRow key={op.id} operation={op} deleteAction={deleteOperation} />
+        ))}
       </ul>
       <p className="mt-4 text-sm">
         <Link href="/dashboard" className="text-slate-600 hover:underline">← Volver al Resumen</Link>
