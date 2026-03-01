@@ -62,6 +62,12 @@ export default function DashboardLayout({
                     >
                         Conciliación
                     </Link>
+                    <Link
+                        href="/dashboard/backup"
+                        className="block py-2 px-3 rounded-md hover:bg-slate-800 transition-colors"
+                    >
+                        Respaldo
+                    </Link>
                 </nav>
             </aside>
 
@@ -78,6 +84,7 @@ export default function DashboardLayout({
                         <Link href="/dashboard/operations" className="hover:text-slate-300">Ops</Link>
                         <Link href="/dashboard/payments" className="hover:text-slate-300">Pagos</Link>
                         <Link href="/dashboard/reconciliation" className="hover:text-slate-300">Concil</Link>
+                        <Link href="/dashboard/backup" className="hover:text-slate-300">Respaldo</Link>
                     </div>
                 </header>
 
