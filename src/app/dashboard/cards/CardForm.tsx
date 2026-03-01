@@ -28,29 +28,29 @@ export function CardForm({ createAction, banks }: { createAction: CreateAction; 
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-wrap gap-3 items-end p-4 bg-slate-100 rounded-lg mb-6">
-      <label className="flex flex-col gap-1">
-        <span className="text-sm text-slate-600">Alias</span>
-        <input type="text" name="alias" placeholder="Ej: Visa Principal" required className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500" />
+    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row flex-wrap gap-4 items-end">
+      <label className="flex flex-col gap-1.5 flex-1 min-w-[140px]">
+        <span className="text-sm font-medium text-slate-600">Alias</span>
+        <input type="text" name="alias" placeholder="Ej: Visa Principal" required className="rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
       </label>
-      <label className="flex flex-col gap-1">
-        <span className="text-sm text-slate-600">Banco</span>
-        <select name="bankId" required className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500">
+      <label className="flex flex-col gap-1.5 w-full sm:w-auto">
+        <span className="text-sm font-medium text-slate-600">Banco</span>
+        <select name="bankId" required className="rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 min-w-[160px]">
           <option value="">Selecciona un banco</option>
           {banks.map((b) => (
             <option key={b.id} value={b.id}>{b.name}</option>
           ))}
         </select>
       </label>
-      <label className="flex flex-col gap-1">
-        <span className="text-sm text-slate-600">Límite VES</span>
-        <input type="number" name="creditLimitVES" step="0.01" min="0" defaultValue="0" className="px-3 py-2 border rounded-md w-28" />
+      <label className="flex flex-col gap-1.5">
+        <span className="text-sm font-medium text-slate-600">Límite VES</span>
+        <input type="number" name="creditLimitVES" step="0.01" min="0" defaultValue="0" className="rounded-lg border border-slate-200 px-3 py-2 text-sm w-28 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
       </label>
-      <label className="flex flex-col gap-1">
-        <span className="text-sm text-slate-600">Saldo apertura VES</span>
-        <input type="number" name="openingBalanceVES" step="0.01" defaultValue="0" className="px-3 py-2 border rounded-md w-28" />
+      <label className="flex flex-col gap-1.5">
+        <span className="text-sm font-medium text-slate-600">Saldo apertura VES</span>
+        <input type="number" name="openingBalanceVES" step="0.01" defaultValue="0" className="rounded-lg border border-slate-200 px-3 py-2 text-sm w-28 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
       </label>
-      <button type="submit" disabled={isPending} className="bg-slate-800 text-white px-4 py-2 rounded-md hover:bg-slate-700 disabled:opacity-50 transition">
+      <button type="submit" disabled={isPending} className="btn-primary shrink-0">
         {isPending ? "Guardando…" : "Añadir"}
       </button>
     </form>

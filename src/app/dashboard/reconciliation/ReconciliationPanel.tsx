@@ -84,7 +84,7 @@ export function ReconciliationPanel({
       <div>
         <label className="block text-sm font-medium text-slate-700 mb-2">Seleccionar pago</label>
         <select
-          className="px-3 py-2 border rounded-md w-full max-w-md"
+          className="rounded-lg border border-slate-200 px-3 py-2 text-sm w-full max-w-md focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
           value={paymentDetail?.id ?? ""}
           onChange={(e) => {
             const id = e.target.value;
@@ -101,61 +101,59 @@ export function ReconciliationPanel({
       </div>
 
       {paymentDetail && (
-        <div className="p-4 bg-slate-100 rounded-lg">
-          <p className="font-medium">
+        <div className="p-4 sm:p-5 bg-slate-50 rounded-xl border border-slate-200">
+          <p className="font-medium text-slate-900">
             Pago: {new Date(paymentDetail.date).toISOString().slice(0, 10)} — {paymentDetail.card.alias} — {formatVES(paymentDetail.amountVES.toString())} VES
           </p>
-          <p className="text-sm text-slate-600">Asigna montos a cada operación (máximo: deuda pendiente de la operación). Total asignado no puede superar el monto del pago.</p>
+          <p className="text-sm text-slate-600 mt-1">Asigna montos a cada operación. Total asignado no puede superar el monto del pago.</p>
 
           <form onSubmit={handleSubmit} className="mt-4 space-y-3">
             <input type="hidden" name="paymentId" value={paymentDetail.id} />
-            <table className="w-full text-sm border-collapse">
-              <thead>
-                <tr className="border-b border-slate-300">
-                  <th className="text-left py-2">Fecha</th>
-                  <th className="text-left py-2">Contraparte</th>
-                  <th className="text-right py-2">Deuda VES</th>
-                  <th className="text-right py-2">Ya asignado (este pago)</th>
-                  <th className="text-right py-2">VES a asignar</th>
-                </tr>
-              </thead>
-              <tbody>
-                {operationsOfCard.map((op) => {
-                  const debtVES = calcDebtVES({ usdCharged: op.usdCharged.toString(), bcvRateOnCharge: op.bcvRateOnCharge.toString() });
-                  const totalAllocatedToOp = op.allocations.reduce((acc, a) => acc + Number(a.amountVESApplied.toString()), 0);
-                  const remaining = Math.max(0, Number(debtVES.toFixed(2)) - totalAllocatedToOp);
-                  const currentForThisPayment = allocatedByOp.get(op.id) ?? 0;
-                  return (
-                    <tr key={op.id} className="border-b border-slate-200">
-                      <td className="py-2">{new Date(op.date).toISOString().slice(0, 10)}</td>
-                      <td>{op.counterparty.name}</td>
-                      <td className="text-right">{formatVES(debtVES)}</td>
-                      <td className="text-right">{formatVES(currentForThisPayment)}</td>
-                      <td className="text-right">
-                        <input
-                          type="number"
-                          name={`op_${op.id}`}
-                          step="0.01"
-                          min="0"
-                          max={remaining}
-                          defaultValue={currentForThisPayment || ""}
-                          placeholder="0"
-                          className="w-24 px-2 py-1 border rounded text-right"
-                        />
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+            <div className="overflow-x-auto -mx-4 sm:mx-0">
+              <table className="w-full text-sm border-collapse min-w-[500px]">
+                <thead>
+                  <tr className="border-b border-slate-200">
+                    <th className="text-left py-3 px-2 font-medium text-slate-600">Fecha</th>
+                    <th className="text-left py-3 px-2 font-medium text-slate-600">Contraparte</th>
+                    <th className="text-right py-3 px-2 font-medium text-slate-600">Deuda VES</th>
+                    <th className="text-right py-3 px-2 font-medium text-slate-600 hidden sm:table-cell">Ya asignado</th>
+                    <th className="text-right py-3 px-2 font-medium text-slate-600">VES a asignar</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {operationsOfCard.map((op) => {
+                    const debtVES = calcDebtVES({ usdCharged: op.usdCharged.toString(), bcvRateOnCharge: op.bcvRateOnCharge.toString() });
+                    const totalAllocatedToOp = op.allocations.reduce((acc, a) => acc + Number(a.amountVESApplied.toString()), 0);
+                    const remaining = Math.max(0, Number(debtVES.toFixed(2)) - totalAllocatedToOp);
+                    const currentForThisPayment = allocatedByOp.get(op.id) ?? 0;
+                    return (
+                      <tr key={op.id} className="border-b border-slate-100">
+                        <td className="py-2 px-2">{new Date(op.date).toISOString().slice(0, 10)}</td>
+                        <td className="py-2 px-2">{op.counterparty.name}</td>
+                        <td className="py-2 px-2 text-right">{formatVES(debtVES)}</td>
+                        <td className="py-2 px-2 text-right hidden sm:table-cell">{formatVES(currentForThisPayment)}</td>
+                        <td className="py-2 px-2 text-right">
+                          <input
+                            type="number"
+                            name={`op_${op.id}`}
+                            step="0.01"
+                            min="0"
+                            max={remaining}
+                            defaultValue={currentForThisPayment || ""}
+                            placeholder="0"
+                            className="w-20 sm:w-24 rounded-lg border border-slate-200 px-2 py-1 text-right text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
             {operationsOfCard.length === 0 && (
-              <p className="text-slate-500">No hay operaciones OPEN/SETTLED en esta tarjeta para asignar.</p>
+              <p className="text-slate-500 text-sm">No hay operaciones OPEN/SETTLED en esta tarjeta para asignar.</p>
             )}
-            <button
-              type="submit"
-              disabled={isPending || operationsOfCard.length === 0}
-              className="mt-2 bg-slate-800 text-white px-4 py-2 rounded-md hover:bg-slate-700 disabled:opacity-50 transition"
-            >
+            <button type="submit" disabled={isPending || operationsOfCard.length === 0} className="btn-primary mt-2">
               {isPending ? "Guardando…" : "Guardar conciliación"}
             </button>
           </form>

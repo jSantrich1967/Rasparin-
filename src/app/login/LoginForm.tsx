@@ -13,13 +13,13 @@ export default function LoginForm({ from }: { from: string }) {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6">
-      <div className="w-full max-w-sm rounded-xl border bg-white p-6 shadow-sm">
-        <h1 className="text-xl font-semibold">Tarjeteando</h1>
-        <p className="text-sm text-gray-500 mt-1">Inicia sesión</p>
+    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      <div className="w-full max-w-md rounded-2xl border border-slate-700/50 bg-slate-800/50 p-6 sm:p-8 shadow-2xl backdrop-blur">
+        <h1 className="text-2xl font-bold text-white">Tarjeteando</h1>
+        <p className="text-slate-400 text-sm mt-1">Inicia sesión para continuar</p>
 
         <form
-          className="mt-6 space-y-3"
+          className="mt-6 space-y-4"
           onSubmit={async (e) => {
             e.preventDefault();
             setLoading(true);
@@ -35,34 +35,36 @@ export default function LoginForm({ from }: { from: string }) {
           }}
         >
           <div>
-            <label className="text-sm font-medium">Usuario</label>
+            <label className="block text-sm font-medium text-slate-300 mb-1.5">Usuario</label>
             <input
-              className="mt-1 w-full rounded-md border px-3 py-2"
+              className="w-full rounded-lg border border-slate-600 bg-slate-900/50 px-3 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               autoComplete="username"
+              placeholder="Tu usuario"
             />
           </div>
 
           <div>
-            <label className="text-sm font-medium">Contraseña</label>
+            <label className="block text-sm font-medium text-slate-300 mb-1.5">Contraseña</label>
             <input
               type="password"
-              className="mt-1 w-full rounded-md border px-3 py-2"
+              className="w-full rounded-lg border border-slate-600 bg-slate-900/50 px-3 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
+              placeholder="••••••••"
             />
           </div>
 
-          {error ? <p className="text-sm text-red-600">{error}</p> : null}
+          {error && <p className="text-sm text-red-400">{error}</p>}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-md bg-black text-white py-2 text-sm disabled:opacity-50"
+            className="w-full rounded-lg bg-white text-slate-900 py-2.5 text-sm font-semibold hover:bg-slate-100 transition-colors disabled:opacity-50"
           >
-            {loading ? "Entrando..." : "Entrar"}
+            {loading ? "Entrando…" : "Entrar"}
           </button>
         </form>
       </div>

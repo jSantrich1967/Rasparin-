@@ -1,8 +1,8 @@
 import { prisma } from "@/lib/prisma";
-import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { FXRateForm } from "./FXRateForm";
 import { FXRateRow } from "./FXRateRow";
+import { PageSection } from "../PageSection";
 
 // Server action: create FX rate (date normalized to 00:00:00Z)
 async function createFXRate(formData: FormData): Promise<{ ok: true } | { ok: false; message: string }> {
@@ -44,20 +44,15 @@ async function deleteFXRate(id: string): Promise<{ ok: true } | { ok: false; mes
 export default async function FXRatesPage() {
   const rates = await prisma.fXRate.findMany({ orderBy: { date: "desc" }, take: 100 });
   return (
-    <section className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Tasas BCV</h2>
-      <p className="text-sm text-slate-600 mb-4">
-        Carga la tasa BCV (VES por 1 USD) por fecha. Se usa para deuda en VES y ganancia no realizada.
-      </p>
-      <FXRateForm createAction={createFXRate} />
-      <ul className="mt-6 space-y-2">
+    <PageSection title="Tasas BCV" description="Carga la tasa BCV (VES por 1 USD) por fecha. Se usa para deuda en VES y ganancia no realizada.">
+      <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm mb-6">
+        <FXRateForm createAction={createFXRate} />
+      </div>
+      <ul className="divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
         {rates.map((r) => (
           <FXRateRow key={r.id} rate={r} deleteAction={deleteFXRate} />
         ))}
       </ul>
-      <p className="mt-4 text-sm">
-        <Link href="/dashboard" className="text-slate-600 hover:underline">← Volver al Resumen</Link>
-      </p>
-    </section>
+    </PageSection>
   );
 }

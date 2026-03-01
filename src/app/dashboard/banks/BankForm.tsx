@@ -27,18 +27,18 @@ export function BankForm({ createAction }: { createAction: CreateAction }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2 items-center mb-6">
+    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
       <input
         type="text"
         name="name"
         placeholder="Nuevo banco"
-        className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500"
+        className="rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:min-w-[200px]"
         required
       />
       <button
         type="submit"
         disabled={isPending}
-        className="bg-slate-800 text-white px-4 py-2 rounded-md hover:bg-slate-700 disabled:opacity-50 transition"
+        className="btn-primary shrink-0"
       >
         {isPending ? "Guardando…" : "Añadir"}
       </button>

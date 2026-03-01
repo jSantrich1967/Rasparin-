@@ -41,12 +41,14 @@ export function BankRow({ bank, updateAction, deleteAction }: { bank: Bank; upda
 
   if (editing) {
     return (
-      <motion.li layout className="flex gap-2 items-center py-2 border-b border-slate-200">
-        <form onSubmit={handleUpdate} className="flex gap-2 items-center">
+      <motion.li layout className="px-4 sm:px-5 py-3 sm:py-4 bg-slate-50">
+        <form onSubmit={handleUpdate} className="flex flex-col sm:flex-row gap-2 sm:items-center">
           <input type="hidden" name="id" value={bank.id} />
-          <input type="text" name="name" defaultValue={bank.name} required className="px-2 py-1 border rounded w-48" />
-          <button type="submit" disabled={isPending} className="bg-slate-700 text-white px-2 py-1 rounded text-sm">Guardar</button>
-          <button type="button" onClick={() => setEditing(false)} className="px-2 py-1 rounded border text-sm">Cancelar</button>
+          <input type="text" name="name" defaultValue={bank.name} required className="rounded-lg border border-slate-200 px-3 py-2 text-sm sm:min-w-[180px]" />
+          <div className="flex gap-2">
+            <button type="submit" disabled={isPending} className="btn-primary text-sm py-1.5">Guardar</button>
+            <button type="button" onClick={() => setEditing(false)} className="btn-secondary text-sm py-1.5">Cancelar</button>
+          </div>
         </form>
       </motion.li>
     );
@@ -57,13 +59,12 @@ export function BankRow({ bank, updateAction, deleteAction }: { bank: Bank; upda
       layout
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      whileHover={{ scale: 1.01 }}
-      className="flex justify-between items-center py-2 border-b border-slate-200"
+      className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 px-4 sm:px-5 py-3 sm:py-4 hover:bg-slate-50/50 transition-colors"
     >
-      <span>{bank.name}</span>
-      <div className="flex gap-2">
-        <button type="button" onClick={() => setEditing(true)} className="text-slate-600 hover:underline text-sm">Editar</button>
-        <button type="button" onClick={handleDelete} disabled={isPending} className="text-red-600 hover:underline text-sm">Eliminar</button>
+      <span className="font-medium text-slate-900">{bank.name}</span>
+      <div className="flex gap-3">
+        <button type="button" onClick={() => setEditing(true)} className="text-sm text-blue-600 hover:underline">Editar</button>
+        <button type="button" onClick={handleDelete} disabled={isPending} className="btn-danger">Eliminar</button>
       </div>
     </motion.li>
   );

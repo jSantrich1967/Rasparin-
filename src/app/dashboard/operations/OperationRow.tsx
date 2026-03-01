@@ -37,23 +37,16 @@ export function OperationRow({ operation, deleteAction }: { operation: Operation
   }
 
   return (
-    <li className="flex flex-wrap justify-between items-center py-2 border-b border-slate-200 text-sm">
-      <div className="flex flex-wrap gap-2 items-center">
-        <span className="font-mono">{new Date(operation.date).toISOString().slice(0, 10)}</span>
-        <span>{operation.card.alias} ({operation.card.bank?.name})</span>
-        <span>{operation.counterparty.name}</span>
-        <span>{formatUSD(operation.usdCharged.toString())}</span>
+    <li className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 px-4 sm:px-5 py-3 sm:py-4 hover:bg-slate-50/50 transition-colors">
+      <div className="flex flex-wrap gap-2 items-center text-sm">
+        <span className="font-mono text-slate-600">{new Date(operation.date).toISOString().slice(0, 10)}</span>
+        <span className="text-slate-900">{operation.card.alias} ({operation.card.bank?.name})</span>
+        <span className="text-slate-700">{operation.counterparty.name}</span>
+        <span className="font-medium">{formatUSD(operation.usdCharged.toString())}</span>
         <span>{formatVES(debtVES)} VES</span>
-        <span className={`font-medium ${operation.status === "OPEN" ? "text-amber-600" : operation.status === "SETTLED" ? "text-green-600" : "text-slate-500"}`}>{operation.status}</span>
+        <span className={`font-medium ${operation.status === "OPEN" ? "text-amber-600" : operation.status === "SETTLED" ? "text-emerald-600" : "text-slate-500"}`}>{operation.status}</span>
       </div>
-      <button
-        type="button"
-        onClick={handleDelete}
-        disabled={isPending}
-        className="text-red-600 hover:underline text-sm"
-      >
-        Eliminar
-      </button>
+      <button type="button" onClick={handleDelete} disabled={isPending} className="btn-danger shrink-0">Eliminar</button>
     </li>
   );
 }

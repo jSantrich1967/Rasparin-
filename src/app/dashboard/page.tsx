@@ -13,10 +13,7 @@ export default async function DashboardPage() {
       prisma.card.count(),
       prisma.operation.count({ where: { status: "OPEN" } }),
       prisma.allocation.findMany({
-        include: {
-          operation: true,
-          payment: true,
-        },
+        include: { operation: true, payment: true },
       }),
       prisma.operation.findMany({
         where: { status: "OPEN" },
@@ -24,7 +21,6 @@ export default async function DashboardPage() {
       }),
     ]);
 
-    // Realized profit: for each allocation, prorate usdCashReceived by (amountVESApplied / debtVES) and subtract usdRealPaid
     let realizedProfitUSD = d(0);
     for (const a of allocationsWithDetails) {
       const op = a.operation;
@@ -47,7 +43,6 @@ export default async function DashboardPage() {
     }
     realizedProfitUSD = round2(realizedProfitUSD);
 
-    // Unrealized profit: for each OPEN op, use last BCV rate for op date; value debt in USD at that rate; profit = usdCashReceived - debtUSD
     let unrealizedProfitUSD = d(0);
     for (const op of openOperations) {
       const lastRate = await getLastBcvRateForDate(op.date);
@@ -64,57 +59,59 @@ export default async function DashboardPage() {
     unrealizedProfitUSD = round2(unrealizedProfitUSD);
 
     return (
-      <main className="p-6">
-        <h1 className="text-2xl font-semibold">Resumen</h1>
-        <p className="text-sm text-slate-500 mt-1">Tarjeteando — Control de cash advance (USD → VES)</p>
+      <main>
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Resumen</h1>
+          <p className="text-slate-500 text-sm mt-1">Tarjeteando — Control de cash advance (USD → VES)</p>
+        </div>
 
-        <div className="grid gap-4 mt-6 md:grid-cols-2 lg:grid-cols-5">
-          <div className="rounded-xl border p-4">
-            <div className="text-sm text-slate-500">Bancos</div>
-            <div className="text-2xl font-semibold">{banks}</div>
-            <Link href="/dashboard/banks" className="text-sm text-slate-600 hover:underline mt-1 block">Ver bancos</Link>
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
+            <div className="text-sm font-medium text-slate-500">Bancos</div>
+            <div className="text-2xl font-bold text-slate-900 mt-1">{banks}</div>
+            <Link href="/dashboard/banks" className="text-sm text-blue-600 hover:underline mt-2 block">Ver bancos</Link>
           </div>
-          <div className="rounded-xl border p-4">
-            <div className="text-sm text-slate-500">Tarjetas</div>
-            <div className="text-2xl font-semibold">{cards}</div>
-            <Link href="/dashboard/cards" className="text-sm text-slate-600 hover:underline mt-1 block">Ver tarjetas</Link>
+          <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
+            <div className="text-sm font-medium text-slate-500">Tarjetas</div>
+            <div className="text-2xl font-bold text-slate-900 mt-1">{cards}</div>
+            <Link href="/dashboard/cards" className="text-sm text-blue-600 hover:underline mt-2 block">Ver tarjetas</Link>
           </div>
-          <div className="rounded-xl border p-4">
-            <div className="text-sm text-slate-500">Operaciones OPEN</div>
-            <div className="text-2xl font-semibold">{opsOpen}</div>
-            <Link href="/dashboard/operations?status=OPEN" className="text-sm text-slate-600 hover:underline mt-1 block">Ver operaciones</Link>
+          <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
+            <div className="text-sm font-medium text-slate-500">Operaciones OPEN</div>
+            <div className="text-2xl font-bold text-slate-900 mt-1">{opsOpen}</div>
+            <Link href="/dashboard/operations?status=OPEN" className="text-sm text-blue-600 hover:underline mt-2 block">Ver operaciones</Link>
           </div>
-          <div className="rounded-xl border p-4">
-            <div className="text-sm text-slate-500">Ganancia realizada (USD)</div>
-            <div className={`text-2xl font-semibold ${Number(realizedProfitUSD) >= 0 ? "text-green-600" : "text-red-600"}`}>
+          <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
+            <div className="text-sm font-medium text-slate-500">Ganancia realizada (USD)</div>
+            <div className={`text-2xl font-bold mt-1 ${Number(realizedProfitUSD) >= 0 ? "text-emerald-600" : "text-red-600"}`}>
               {formatUSD(realizedProfitUSD)}
             </div>
             <p className="text-xs text-slate-500 mt-1">Por conciliaciones aplicadas</p>
           </div>
-          <div className="rounded-xl border p-4">
-            <div className="text-sm text-slate-500">Ganancia no realizada (USD)</div>
-            <div className={`text-2xl font-semibold ${Number(unrealizedProfitUSD) >= 0 ? "text-amber-600" : "text-red-600"}`}>
+          <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
+            <div className="text-sm font-medium text-slate-500">Ganancia no realizada (USD)</div>
+            <div className={`text-2xl font-bold mt-1 ${Number(unrealizedProfitUSD) >= 0 ? "text-amber-600" : "text-red-600"}`}>
               {formatUSD(unrealizedProfitUSD)}
             </div>
-            <p className="text-xs text-slate-500 mt-1">OPEN valoradas con última tasa BCV por fecha</p>
+            <p className="text-xs text-slate-500 mt-1">OPEN valoradas con última tasa BCV</p>
           </div>
         </div>
 
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Link href="/dashboard/fx-rates" className="rounded-lg border px-4 py-2 text-sm hover:bg-slate-100">Tasas BCV</Link>
-          <Link href="/dashboard/counterparties" className="rounded-lg border px-4 py-2 text-sm hover:bg-slate-100">Contrapartes</Link>
-          <Link href="/dashboard/operations" className="rounded-lg border px-4 py-2 text-sm hover:bg-slate-100">Operaciones</Link>
-          <Link href="/dashboard/payments" className="rounded-lg border px-4 py-2 text-sm hover:bg-slate-100">Pagos</Link>
-          <Link href="/dashboard/reconciliation" className="rounded-lg border px-4 py-2 text-sm hover:bg-slate-100">Conciliación</Link>
-          <Link href="/dashboard/backup" className="rounded-lg border px-4 py-2 text-sm hover:bg-slate-100">Respaldo</Link>
+        <div className="mt-6 sm:mt-8 flex flex-wrap gap-2 sm:gap-3">
+          <Link href="/dashboard/fx-rates" className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">Tasas BCV</Link>
+          <Link href="/dashboard/counterparties" className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">Contrapartes</Link>
+          <Link href="/dashboard/operations" className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">Operaciones</Link>
+          <Link href="/dashboard/payments" className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">Pagos</Link>
+          <Link href="/dashboard/reconciliation" className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">Conciliación</Link>
+          <Link href="/dashboard/backup" className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">Respaldo</Link>
         </div>
       </main>
     );
   } catch {
     return (
-      <main className="p-6">
-        <h1 className="text-2xl font-semibold">Resumen</h1>
-        <p className="text-sm text-red-600 mt-2">
+      <main>
+        <h1 className="text-2xl font-bold text-slate-900">Resumen</h1>
+        <p className="text-red-600 mt-2 text-sm">
           No se pudo conectar a la base de datos. Verifica <code className="font-mono">DATABASE_URL</code> en tu entorno.
         </p>
       </main>

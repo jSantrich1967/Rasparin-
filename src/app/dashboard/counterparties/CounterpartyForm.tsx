@@ -27,27 +27,27 @@ export function CounterpartyForm({ createAction }: { createAction: CreateAction 
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-wrap gap-3 items-end p-4 bg-slate-100 rounded-lg">
-      <label className="flex flex-col gap-1">
-        <span className="text-sm text-slate-600">Nombre</span>
-        <input type="text" name="name" required className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500" />
+    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row flex-wrap gap-4 items-end">
+      <label className="flex flex-col gap-1.5 flex-1 min-w-[140px]">
+        <span className="text-sm font-medium text-slate-600">Nombre</span>
+        <input type="text" name="name" required className="rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
       </label>
-      <label className="flex flex-col gap-1">
-        <span className="text-sm text-slate-600">Tipo</span>
-        <select name="type" className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500">
+      <label className="flex flex-col gap-1.5 w-full sm:w-auto">
+        <span className="text-sm font-medium text-slate-600">Tipo</span>
+        <select name="type" className="rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
           <option value="PERSONA">Persona</option>
           <option value="COMERCIO">Comercio</option>
         </select>
       </label>
-      <label className="flex flex-col gap-1">
-        <span className="text-sm text-slate-600">Contacto</span>
-        <input type="text" name="contact" className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500" />
+      <label className="flex flex-col gap-1.5 flex-1 min-w-[140px]">
+        <span className="text-sm font-medium text-slate-600">Contacto</span>
+        <input type="text" name="contact" className="rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
       </label>
-      <label className="flex flex-col gap-1">
-        <span className="text-sm text-slate-600">Notas</span>
-        <input type="text" name="notes" className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500" />
+      <label className="flex flex-col gap-1.5 flex-1 min-w-[140px]">
+        <span className="text-sm font-medium text-slate-600">Notas</span>
+        <input type="text" name="notes" className="rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
       </label>
-      <button type="submit" disabled={isPending} className="bg-slate-800 text-white px-4 py-2 rounded-md hover:bg-slate-700 disabled:opacity-50 transition">
+      <button type="submit" disabled={isPending} className="btn-primary shrink-0">
         {isPending ? "Guardando…" : "Añadir"}
       </button>
     </form>

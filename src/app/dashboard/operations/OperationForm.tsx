@@ -38,50 +38,50 @@ export function OperationForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-wrap gap-3 items-end p-4 bg-slate-100 rounded-lg">
-      <label className="flex flex-col gap-1">
-        <span className="text-sm text-slate-600">Fecha</span>
-        <input type="date" name="date" required className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500" />
+    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row flex-wrap gap-4 items-end">
+      <label className="flex flex-col gap-1.5">
+        <span className="text-sm font-medium text-slate-600">Fecha</span>
+        <input type="date" name="date" required className="rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
       </label>
-      <label className="flex flex-col gap-1">
-        <span className="text-sm text-slate-600">Tarjeta</span>
-        <select name="cardId" required className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 min-w-[160px]">
+      <label className="flex flex-col gap-1.5 w-full sm:w-auto">
+        <span className="text-sm font-medium text-slate-600">Tarjeta</span>
+        <select name="cardId" required className="rounded-lg border border-slate-200 px-3 py-2 text-sm min-w-[160px] focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
           <option value="">Selecciona</option>
           {cards.map((c) => (
             <option key={c.id} value={c.id}>{c.alias} ({c.bank?.name})</option>
           ))}
         </select>
       </label>
-      <label className="flex flex-col gap-1">
-        <span className="text-sm text-slate-600">Contraparte</span>
-        <select name="counterpartyId" required className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 min-w-[140px]">
+      <label className="flex flex-col gap-1.5 w-full sm:w-auto">
+        <span className="text-sm font-medium text-slate-600">Contraparte</span>
+        <select name="counterpartyId" required className="rounded-lg border border-slate-200 px-3 py-2 text-sm min-w-[140px] focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
           <option value="">Selecciona</option>
           {counterparties.map((c) => (
             <option key={c.id} value={c.id}>{c.name} ({c.type})</option>
           ))}
         </select>
       </label>
-      <label className="flex flex-col gap-1">
-        <span className="text-sm text-slate-600">USD cargado</span>
-        <input type="number" name="usdCharged" step="0.01" min="0" required placeholder="100" className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 w-24" />
+      <label className="flex flex-col gap-1.5">
+        <span className="text-sm font-medium text-slate-600">USD cargado</span>
+        <input type="number" name="usdCharged" step="0.01" min="0" required placeholder="100" className="rounded-lg border border-slate-200 px-3 py-2 text-sm w-24 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
       </label>
-      <label className="flex flex-col gap-1">
-        <span className="text-sm text-slate-600">% fee banco</span>
-        <input type="number" name="bankFeePercent" step="0.001" min="0" max="1" defaultValue="0.015" placeholder="1.5%" className="px-3 py-2 border rounded-md w-20" />
+      <label className="flex flex-col gap-1.5">
+        <span className="text-sm font-medium text-slate-600">% fee banco</span>
+        <input type="number" name="bankFeePercent" step="0.001" min="0" max="1" defaultValue="0.015" className="rounded-lg border border-slate-200 px-3 py-2 text-sm w-20 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
       </label>
-      <label className="flex flex-col gap-1">
-        <span className="text-sm text-slate-600">% fee comercio</span>
-        <input type="number" name="merchantFeePercent" step="0.001" min="0" max="1" defaultValue="0.01" placeholder="1%" className="px-3 py-2 border rounded-md w-20" />
+      <label className="flex flex-col gap-1.5">
+        <span className="text-sm font-medium text-slate-600">% fee comercio</span>
+        <input type="number" name="merchantFeePercent" step="0.001" min="0" max="1" defaultValue="0.01" className="rounded-lg border border-slate-200 px-3 py-2 text-sm w-20 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
       </label>
-      <label className="flex flex-col gap-1">
-        <span className="text-sm text-slate-600">Tasa BCV al cargo</span>
-        <input type="number" name="bcvRateOnCharge" step="0.000001" min="0" required placeholder="36.5" className="px-3 py-2 border rounded-md w-24" />
+      <label className="flex flex-col gap-1.5">
+        <span className="text-sm font-medium text-slate-600">Tasa BCV</span>
+        <input type="number" name="bcvRateOnCharge" step="0.000001" min="0" required placeholder="36.5" className="rounded-lg border border-slate-200 px-3 py-2 text-sm w-24 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
       </label>
-      <label className="flex flex-col gap-1">
-        <span className="text-sm text-slate-600">Notas</span>
-        <input type="text" name="notes" className="px-3 py-2 border rounded-md w-32" />
+      <label className="flex flex-col gap-1.5">
+        <span className="text-sm font-medium text-slate-600">Notas</span>
+        <input type="text" name="notes" className="rounded-lg border border-slate-200 px-3 py-2 text-sm w-32 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
       </label>
-      <button type="submit" disabled={isPending} className="bg-slate-800 text-white px-4 py-2 rounded-md hover:bg-slate-700 disabled:opacity-50 transition">
+      <button type="submit" disabled={isPending} className="btn-primary shrink-0">
         {isPending ? "Guardando…" : "Añadir"}
       </button>
     </form>

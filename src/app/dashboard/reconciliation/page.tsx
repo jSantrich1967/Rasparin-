@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
-import Link from "next/link";
 import { ReconciliationPanel } from "./ReconciliationPanel";
+import { PageSection } from "../PageSection";
 import { applyAllocations } from "@/lib/reconciliation";
 import { revalidatePath } from "next/cache";
 
@@ -62,20 +62,18 @@ export default async function ReconciliationPage({
     : [];
 
   return (
-    <section className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Conciliación</h2>
-      <p className="text-sm text-slate-600 mb-4">
-        Elige un pago y asigna montos en VES a operaciones de la misma tarjeta. No puedes superar el monto del pago ni la deuda pendiente de cada operación.
-      </p>
-      <ReconciliationPanel
-        payments={payments}
-        paymentDetail={paymentDetail}
-        operationsOfCard={operationsOfCard}
-        submitAllocations={submitAllocations}
-      />
-      <p className="mt-4 text-sm">
-        <Link href="/dashboard" className="text-slate-600 hover:underline">← Volver al Resumen</Link>
-      </p>
-    </section>
+    <PageSection
+      title="Conciliación"
+      description="Elige un pago y asigna montos en VES a operaciones de la misma tarjeta. No puedes superar el monto del pago ni la deuda pendiente."
+    >
+      <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm">
+        <ReconciliationPanel
+          payments={payments}
+          paymentDetail={paymentDetail}
+          operationsOfCard={operationsOfCard}
+          submitAllocations={submitAllocations}
+        />
+      </div>
+    </PageSection>
   );
 }

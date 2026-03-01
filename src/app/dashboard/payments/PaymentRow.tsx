@@ -36,23 +36,16 @@ export function PaymentRow({ payment, deleteAction }: { payment: Payment; delete
   }
 
   return (
-    <li className="flex flex-wrap justify-between items-center py-2 border-b border-slate-200 text-sm">
-      <div className="flex flex-wrap gap-2 items-center">
-        <span className="font-mono">{new Date(payment.date).toISOString().slice(0, 10)}</span>
-        <span>{payment.card.alias} ({payment.card.bank?.name})</span>
-        <span>{formatVES(payment.amountVES.toString())} VES</span>
+    <li className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 px-4 sm:px-5 py-3 sm:py-4 hover:bg-slate-50/50 transition-colors">
+      <div className="flex flex-wrap gap-2 items-center text-sm">
+        <span className="font-mono text-slate-600">{new Date(payment.date).toISOString().slice(0, 10)}</span>
+        <span className="text-slate-900">{payment.card.alias} ({payment.card.bank?.name})</span>
+        <span className="font-medium">{formatVES(payment.amountVES.toString())} VES</span>
         <span className="text-slate-500">Asignado: {formatVES(allocated)}</span>
-        <span className={remaining > 0 ? "text-amber-600" : "text-green-600"}>Restante: {formatVES(remaining)}</span>
-        <Link href={`/dashboard/reconciliation?payment=${payment.id}`} className="text-slate-600 hover:underline">Conciliar</Link>
+        <span className={remaining > 0 ? "text-amber-600" : "text-emerald-600"}>Restante: {formatVES(remaining)}</span>
+        <Link href={`/dashboard/reconciliation?payment=${payment.id}`} className="text-blue-600 hover:underline">Conciliar</Link>
       </div>
-      <button
-        type="button"
-        onClick={handleDelete}
-        disabled={isPending}
-        className="text-red-600 hover:underline text-sm"
-      >
-        Eliminar
-      </button>
+      <button type="button" onClick={handleDelete} disabled={isPending} className="btn-danger shrink-0">Eliminar</button>
     </li>
   );
 }

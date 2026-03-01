@@ -1,8 +1,8 @@
 import { prisma } from "@/lib/prisma";
-import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { BankForm } from "./BankForm";
 import { BankRow } from "./BankRow";
+import { PageSection } from "../PageSection";
 
 async function createBank(formData: FormData): Promise<{ ok: true } | { ok: false; message: string }> {
   "use server";
@@ -49,17 +49,15 @@ async function deleteBank(id: string): Promise<{ ok: true } | { ok: false; messa
 export default async function BanksPage() {
   const banks = await prisma.bank.findMany({ orderBy: { name: "asc" } });
   return (
-    <section className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Bancos</h2>
-      <BankForm createAction={createBank} />
-      <ul className="mt-6 space-y-2">
+    <PageSection title="Bancos" description="Gestiona los bancos asociados a tus tarjetas.">
+      <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm mb-6">
+        <BankForm createAction={createBank} />
+      </div>
+      <ul className="divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
         {banks.map((b) => (
           <BankRow key={b.id} bank={b} updateAction={updateBank} deleteAction={deleteBank} />
         ))}
       </ul>
-      <p className="mt-4 text-sm">
-        <Link href="/dashboard" className="text-slate-600 hover:underline">← Volver al Resumen</Link>
-      </p>
-    </section>
+    </PageSection>
   );
 }

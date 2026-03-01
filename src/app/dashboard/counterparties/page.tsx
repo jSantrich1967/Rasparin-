@@ -1,8 +1,8 @@
 import { prisma } from "@/lib/prisma";
-import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { CounterpartyForm } from "./CounterpartyForm";
 import { CounterpartyRow } from "./CounterpartyRow";
+import { PageSection } from "../PageSection";
 
 async function createCounterparty(formData: FormData): Promise<{ ok: true } | { ok: false; message: string }> {
   "use server";
@@ -55,23 +55,15 @@ async function deleteCounterparty(id: string): Promise<{ ok: true } | { ok: fals
 export default async function CounterpartiesPage() {
   const list = await prisma.counterparty.findMany({ orderBy: [{ type: "asc" }, { name: "asc" }] });
   return (
-    <section className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Contrapartes</h2>
-      <p className="text-sm text-slate-600 mb-4">Personas o comercios con los que realizas operaciones.</p>
-      <CounterpartyForm createAction={createCounterparty} />
-      <ul className="mt-6 space-y-2">
+    <PageSection title="Contrapartes" description="Personas o comercios con los que realizas operaciones.">
+      <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm mb-6">
+        <CounterpartyForm createAction={createCounterparty} />
+      </div>
+      <ul className="divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
         {list.map((c) => (
-          <CounterpartyRow
-            key={c.id}
-            counterparty={c}
-            updateAction={updateCounterparty}
-            deleteAction={deleteCounterparty}
-          />
+          <CounterpartyRow key={c.id} counterparty={c} updateAction={updateCounterparty} deleteAction={deleteCounterparty} />
         ))}
       </ul>
-      <p className="mt-4 text-sm">
-        <Link href="/dashboard" className="text-slate-600 hover:underline">← Volver al Resumen</Link>
-      </p>
-    </section>
+    </PageSection>
   );
 }

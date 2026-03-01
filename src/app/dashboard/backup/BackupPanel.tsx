@@ -61,16 +61,16 @@ export function BackupPanel() {
   }
 
   return (
-    <div className="flex flex-wrap gap-4 p-4 bg-slate-100 rounded-lg">
+    <div className="flex flex-col sm:flex-row flex-wrap gap-4 items-start sm:items-center">
       <button
         type="button"
         onClick={handleExport}
         disabled={isPending}
-        className="bg-slate-800 text-white px-4 py-2 rounded-md hover:bg-slate-700 disabled:opacity-50 transition font-medium"
+        className="btn-primary"
       >
         {isPending ? "Procesando…" : "Exportar respaldo"}
       </button>
-      <div className="flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2">
         <input
           ref={fileInputRef}
           type="file"
@@ -82,7 +82,7 @@ export function BackupPanel() {
         />
         <label
           htmlFor="backup-file"
-          className={`inline-block bg-amber-600 text-white px-4 py-2 rounded-md hover:bg-amber-700 cursor-pointer transition font-medium ${isPending ? "opacity-50 pointer-events-none" : ""}`}
+          className={`inline-flex items-center justify-center rounded-lg border border-amber-600 bg-amber-600 px-4 py-2 text-sm font-medium text-white cursor-pointer hover:bg-amber-700 transition-colors ${isPending ? "opacity-50 pointer-events-none" : ""}`}
         >
           Importar respaldo
         </label>

@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
-import Link from "next/link";
 import { revalidatePath } from "next/cache";
+import { PageSection } from "../PageSection";
 import { CardForm } from "./CardForm";
 import { CardRow } from "./CardRow";
 async function createCard(formData: FormData): Promise<{ ok: true } | { ok: false; message: string }> {
@@ -76,10 +76,11 @@ export default async function CardsPage() {
   });
   const banks = await prisma.bank.findMany({ orderBy: { name: "asc" } });
   return (
-    <section className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Tarjetas</h2>
-      <CardForm createAction={createCard} banks={banks} />
-      <ul className="mt-6 space-y-2">
+    <PageSection title="Tarjetas" description="Gestiona las tarjetas de crédito asociadas a tus bancos.">
+      <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm mb-6">
+        <CardForm createAction={createCard} banks={banks} />
+      </div>
+      <ul className="divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
         {cards.map((c) => (
           <CardRow
             key={c.id}
@@ -97,9 +98,6 @@ export default async function CardsPage() {
           />
         ))}
       </ul>
-      <p className="mt-4 text-sm">
-        <Link href="/dashboard" className="text-slate-600 hover:underline">← Volver al Resumen</Link>
-      </p>
-    </section>
+    </PageSection>
   );
 }

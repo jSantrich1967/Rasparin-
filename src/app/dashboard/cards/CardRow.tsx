@@ -50,18 +50,20 @@ export function CardRow({ card, updateAction, deleteAction }: { card: Card; upda
 
   if (editing) {
     return (
-      <motion.li layout className="py-2 border-b border-slate-200">
-        <form onSubmit={handleUpdate} className="flex flex-wrap gap-2 items-center">
+      <motion.li layout className="px-4 sm:px-5 py-3 sm:py-4 bg-slate-50">
+        <form onSubmit={handleUpdate} className="flex flex-col sm:flex-row flex-wrap gap-2 sm:items-center">
           <input type="hidden" name="id" value={card.id} />
-          <input type="text" name="alias" defaultValue={card.alias} required className="px-2 py-1 border rounded w-36" placeholder="Alias" />
-          <input type="number" name="creditLimitVES" step="0.01" min="0" defaultValue={card.creditLimitVES} className="px-2 py-1 border rounded w-24" />
-          <input type="number" name="openingBalanceVES" step="0.01" defaultValue={card.openingBalanceVES} className="px-2 py-1 border rounded w-24" />
-          <select name="status" defaultValue={card.status} className="px-2 py-1 border rounded">
+          <input type="text" name="alias" defaultValue={card.alias} required className="rounded-lg border border-slate-200 px-3 py-2 text-sm w-full sm:w-40" placeholder="Alias" />
+          <input type="number" name="creditLimitVES" step="0.01" min="0" defaultValue={card.creditLimitVES} className="rounded-lg border border-slate-200 px-3 py-2 text-sm w-28" />
+          <input type="number" name="openingBalanceVES" step="0.01" defaultValue={card.openingBalanceVES} className="rounded-lg border border-slate-200 px-3 py-2 text-sm w-28" />
+          <select name="status" defaultValue={card.status} className="rounded-lg border border-slate-200 px-3 py-2 text-sm">
             <option value="ACTIVE">Activa</option>
             <option value="INACTIVE">Inactiva</option>
           </select>
-          <button type="submit" disabled={isPending} className="bg-slate-700 text-white px-2 py-1 rounded text-sm">Guardar</button>
-          <button type="button" onClick={() => setEditing(false)} className="px-2 py-1 rounded border text-sm">Cancelar</button>
+          <div className="flex gap-2">
+            <button type="submit" disabled={isPending} className="btn-primary text-sm py-1.5">Guardar</button>
+            <button type="button" onClick={() => setEditing(false)} className="btn-secondary text-sm py-1.5">Cancelar</button>
+          </div>
         </form>
       </motion.li>
     );
@@ -72,17 +74,16 @@ export function CardRow({ card, updateAction, deleteAction }: { card: Card; upda
       layout
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      whileHover={{ scale: 1.01 }}
-      className="flex justify-between items-center py-2 border-b border-slate-200"
+      className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 px-4 sm:px-5 py-3 sm:py-4 hover:bg-slate-50/50 transition-colors"
     >
-      <span>
-        <strong>{card.alias}</strong> <span className="text-slate-500 text-sm">({card.bankName})</span>
-        <span className="text-slate-600 text-sm ml-2">Límite: {formatVES(card.creditLimitVES)} — Saldo apertura: {formatVES(card.openingBalanceVES)}</span>
-        <span className={`ml-2 text-xs ${card.status === "ACTIVE" ? "text-green-600" : "text-slate-500"}`}>{card.status}</span>
+      <span className="text-sm">
+        <strong className="text-slate-900">{card.alias}</strong> <span className="text-slate-500">({card.bankName})</span>
+        <span className="text-slate-600 ml-2">Límite: {formatVES(card.creditLimitVES)} — Saldo: {formatVES(card.openingBalanceVES)}</span>
+        <span className={`ml-2 text-xs ${card.status === "ACTIVE" ? "text-emerald-600" : "text-slate-500"}`}>{card.status}</span>
       </span>
-      <div className="flex gap-2">
-        <button type="button" onClick={() => setEditing(true)} className="text-slate-600 hover:underline text-sm">Editar</button>
-        <button type="button" onClick={handleDelete} disabled={isPending} className="text-red-600 hover:underline text-sm">Eliminar</button>
+      <div className="flex gap-3">
+        <button type="button" onClick={() => setEditing(true)} className="text-sm text-blue-600 hover:underline">Editar</button>
+        <button type="button" onClick={handleDelete} disabled={isPending} className="btn-danger">Eliminar</button>
       </div>
     </motion.li>
   );

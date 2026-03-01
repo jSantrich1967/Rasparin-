@@ -27,33 +27,16 @@ export function FXRateForm({ createAction }: { createAction: CreateAction }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-wrap gap-2 items-end">
-      <label className="flex flex-col gap-1">
-        <span className="text-sm text-slate-600">Fecha</span>
-        <input
-          type="date"
-          name="date"
-          required
-          className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500"
-        />
+    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row flex-wrap gap-4 items-end">
+      <label className="flex flex-col gap-1.5 w-full sm:w-auto">
+        <span className="text-sm font-medium text-slate-600">Fecha</span>
+        <input type="date" name="date" required className="rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
       </label>
-      <label className="flex flex-col gap-1">
-        <span className="text-sm text-slate-600">Tasa BCV (VES/USD)</span>
-        <input
-          type="number"
-          name="bcvRate"
-          step="0.000001"
-          min="0"
-          required
-          placeholder="36.50"
-          className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 w-32"
-        />
+      <label className="flex flex-col gap-1.5 w-full sm:w-auto">
+        <span className="text-sm font-medium text-slate-600">Tasa BCV (VES/USD)</span>
+        <input type="number" name="bcvRate" step="0.000001" min="0" required placeholder="36.50" className="rounded-lg border border-slate-200 px-3 py-2 text-sm w-full sm:w-32 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
       </label>
-      <button
-        type="submit"
-        disabled={isPending}
-        className="bg-slate-800 text-white px-4 py-2 rounded-md hover:bg-slate-700 disabled:opacity-50 transition"
-      >
+      <button type="submit" disabled={isPending} className="btn-primary shrink-0">
         {isPending ? "Guardando…" : "Añadir"}
       </button>
     </form>
