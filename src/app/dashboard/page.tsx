@@ -106,6 +106,7 @@ export default async function DashboardPage() {
           <Link href="/dashboard/operations" className="rounded-lg border px-4 py-2 text-sm hover:bg-slate-100">Operaciones</Link>
           <Link href="/dashboard/payments" className="rounded-lg border px-4 py-2 text-sm hover:bg-slate-100">Pagos</Link>
           <Link href="/dashboard/reconciliation" className="rounded-lg border px-4 py-2 text-sm hover:bg-slate-100">Conciliación</Link>
+          <Link href="/dashboard/backup" className="rounded-lg border px-4 py-2 text-sm hover:bg-slate-100">Respaldo</Link>
         </div>
       </main>
     );
