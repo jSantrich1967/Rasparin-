@@ -3,10 +3,10 @@ export default function Home() {
     <main className="min-h-screen flex items-center justify-center bg-slate-950 text-slate-50">
       <div className="max-w-xl w-full px-4">
         <h1 className="text-3xl font-bold mb-4">
-          Rasparin - Salpicadero
+          Tarjeteando
         </h1>
         <p className="text-sm text-slate-300 mb-6">
-          Bienvenido al panel de control de Rasparina.
+          Control de cash advance indirecto (USD → VES) por tarjeta.
         </p>
         <a
           href="/dashboard"

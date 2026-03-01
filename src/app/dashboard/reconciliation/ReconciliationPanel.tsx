@@ -1,0 +1,166 @@
+"use client";
+
+import { useTransition } from "react";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { formatVES } from "@/lib/money";
+import { calcDebtVES } from "@/lib/calc";
+
+type Payment = {
+  id: string;
+  date: Date;
+  amountVES: { toString(): string };
+  card: { alias: string; bank: { name: string } | null };
+};
+
+type Operation = {
+  id: string;
+  date: Date;
+  usdCharged: { toString(): string };
+  bcvRateOnCharge: { toString(): string };
+  counterparty: { name: string };
+  status: string;
+  allocations: { amountVESApplied: { toString(): string }; paymentId: string }[];
+};
+
+type Allocation = {
+  operationId: string;
+  amountVESApplied: { toString(): string };
+  operation: { counterparty: { name: string }; date: Date };
+};
+
+type PaymentDetail = {
+  id: string;
+  date: Date;
+  amountVES: { toString(): string };
+  bcvRateOnPayment: { toString(): string };
+  card: { alias: string; bank: { name: string } | null };
+  allocations: Allocation[];
+};
+
+type SubmitAction = (formData: FormData) => Promise<{ ok: true } | { ok: false; message: string }>;
+
+export function ReconciliationPanel({
+  payments,
+  paymentDetail,
+  operationsOfCard,
+  submitAllocations,
+}: {
+  payments: Payment[];
+  paymentDetail: PaymentDetail | null;
+  operationsOfCard: Operation[];
+  submitAllocations: SubmitAction;
+}) {
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!paymentDetail) return;
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    formData.set("paymentId", paymentDetail.id);
+    startTransition(async () => {
+      const result = await submitAllocations(formData);
+      if (result.ok) {
+        toast.success("Conciliación guardada");
+        router.refresh();
+      } else {
+        toast.error(result.message);
+      }
+    });
+  }
+
+  const paymentTotal = paymentDetail ? Number(paymentDetail.amountVES.toString()) : 0;
+  const allocatedByOp = new Map<string, number>();
+  if (paymentDetail) {
+    for (const a of paymentDetail.allocations) {
+      allocatedByOp.set(a.operationId, Number(a.amountVESApplied.toString()));
+    }
+  }
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <label className="block text-sm font-medium text-slate-700 mb-2">Seleccionar pago</label>
+        <select
+          className="px-3 py-2 border rounded-md w-full max-w-md"
+          value={paymentDetail?.id ?? ""}
+          onChange={(e) => {
+            const id = e.target.value;
+            router.push(id ? `/dashboard/reconciliation?payment=${id}` : "/dashboard/reconciliation");
+          }}
+        >
+          <option value="">-- Elige un pago --</option>
+          {payments.map((p) => (
+            <option key={p.id} value={p.id}>
+              {new Date(p.date).toISOString().slice(0, 10)} — {p.card.alias} — {formatVES(p.amountVES.toString())} VES
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {paymentDetail && (
+        <div className="p-4 bg-slate-100 rounded-lg">
+          <p className="font-medium">
+            Pago: {new Date(paymentDetail.date).toISOString().slice(0, 10)} — {paymentDetail.card.alias} — {formatVES(paymentDetail.amountVES.toString())} VES
+          </p>
+          <p className="text-sm text-slate-600">Asigna montos a cada operación (máximo: deuda pendiente de la operación). Total asignado no puede superar el monto del pago.</p>
+
+          <form onSubmit={handleSubmit} className="mt-4 space-y-3">
+            <input type="hidden" name="paymentId" value={paymentDetail.id} />
+            <table className="w-full text-sm border-collapse">
+              <thead>
+                <tr className="border-b border-slate-300">
+                  <th className="text-left py-2">Fecha</th>
+                  <th className="text-left py-2">Contraparte</th>
+                  <th className="text-right py-2">Deuda VES</th>
+                  <th className="text-right py-2">Ya asignado (este pago)</th>
+                  <th className="text-right py-2">VES a asignar</th>
+                </tr>
+              </thead>
+              <tbody>
+                {operationsOfCard.map((op) => {
+                  const debtVES = calcDebtVES({ usdCharged: op.usdCharged.toString(), bcvRateOnCharge: op.bcvRateOnCharge.toString() });
+                  const totalAllocatedToOp = op.allocations.reduce((acc, a) => acc + Number(a.amountVESApplied.toString()), 0);
+                  const remaining = Math.max(0, Number(debtVES.toFixed(2)) - totalAllocatedToOp);
+                  const currentForThisPayment = allocatedByOp.get(op.id) ?? 0;
+                  return (
+                    <tr key={op.id} className="border-b border-slate-200">
+                      <td className="py-2">{new Date(op.date).toISOString().slice(0, 10)}</td>
+                      <td>{op.counterparty.name}</td>
+                      <td className="text-right">{formatVES(debtVES)}</td>
+                      <td className="text-right">{formatVES(currentForThisPayment)}</td>
+                      <td className="text-right">
+                        <input
+                          type="number"
+                          name={`op_${op.id}`}
+                          step="0.01"
+                          min="0"
+                          max={remaining}
+                          defaultValue={currentForThisPayment || ""}
+                          placeholder="0"
+                          className="w-24 px-2 py-1 border rounded text-right"
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+            {operationsOfCard.length === 0 && (
+              <p className="text-slate-500">No hay operaciones OPEN/SETTLED en esta tarjeta para asignar.</p>
+            )}
+            <button
+              type="submit"
+              disabled={isPending || operationsOfCard.length === 0}
+              className="mt-2 bg-slate-800 text-white px-4 py-2 rounded-md hover:bg-slate-700 disabled:opacity-50 transition"
+            >
+              {isPending ? "Guardando…" : "Guardar conciliación"}
+            </button>
+          </form>
+        </div>
+      )}
+    </div>
+  );
+}
