@@ -53,14 +53,13 @@ export default async function ReconciliationPage({
   ]);
 
   // For selected payment: get OPEN/SETTLED operations of same card to show allocation inputs
-  let operationsOfCard: Awaited<ReturnType<typeof prisma.operation.findMany>> = [];
-  if (paymentDetail) {
-    operationsOfCard = await prisma.operation.findMany({
-      where: { cardId: paymentDetail.cardId, status: { in: ["OPEN", "SETTLED"] } },
-      include: { counterparty: true, allocations: true },
-      orderBy: { date: "asc" },
-    });
-  }
+  const operationsOfCard = paymentDetail
+    ? await prisma.operation.findMany({
+        where: { cardId: paymentDetail.cardId, status: { in: ["OPEN", "SETTLED"] } },
+        include: { counterparty: true, allocations: true },
+        orderBy: { date: "asc" },
+      })
+    : [];
 
   return (
     <section className="p-6">
