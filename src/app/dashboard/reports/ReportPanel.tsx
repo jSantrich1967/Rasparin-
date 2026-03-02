@@ -133,7 +133,7 @@ export function ReportPanel({ rows, summary }: ReportPanelProps) {
   return (
     <div className="space-y-4">
       {/* Botones de acción */}
-      <div className="flex flex-wrap gap-2 print:hidden">
+      <div className="flex flex-wrap gap-2 no-print">
         <button
           type="button"
           onClick={handlePrint}
@@ -163,7 +163,7 @@ export function ReportPanel({ rows, summary }: ReportPanelProps) {
       </div>
 
       {/* Tabla de reporte */}
-      <div ref={tableRef} className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden print:shadow-none">
+      <div ref={tableRef} className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm" id="report-table">
             <thead>
