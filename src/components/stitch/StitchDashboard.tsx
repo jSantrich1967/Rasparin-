@@ -94,7 +94,6 @@ export function StitchDashboard({
                   <h2 className="text-4xl font-extrabold tracking-tight">{formatUSD(totalDebtUSD)}</h2>
                 </div>
                 <p className="text-slate-500 text-xs mt-1 font-medium tracking-tight">≈ {formatVES(totalDebtVES)} VES <span className="text-[10px] opacity-40 italic ml-1">({bcvRate > 0 ? bcvRate.toFixed(2) : "—"} BCV)</span></p>
-                <p className="text-emerald-accent/90 text-xs mt-2 font-semibold">USD netos recibidos (post-fees): {formatUSD(totalNetUsdReceived)}</p>
               </div>
               {bcvRate > 0 && (
                 <div className="bg-white/5 px-2 py-1 rounded-lg text-[10px] font-bold flex items-center gap-1 border border-white/10">
@@ -122,12 +121,13 @@ export function StitchDashboard({
               </svg>
             </div>
           </div>
-          <div className="glass-card rounded-2xl p-4 relative overflow-hidden">
-            <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-2">Deuda OPEN (USD)</p>
-            <h3 className="text-xl font-bold text-white">{formatUSD(pendingDebtUSD)}</h3>
-            <div className="mt-4 h-8 opacity-40">
+          <div className="glass-card rounded-2xl p-4 relative overflow-hidden border border-emerald-accent/20">
+            <p className="text-emerald-accent/90 text-[10px] font-bold uppercase tracking-wider mb-2">USD Netos Recibidos (post-fees)</p>
+            <h3 className="text-xl font-bold text-emerald-accent">{formatUSD(totalNetUsdReceived)}</h3>
+            <p className="text-slate-500 text-[9px] mt-1">Efectivo tras comisiones</p>
+            <div className="mt-4 h-8">
               <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 30">
-                <path d="M0,15 Q25,25 50,15 T100,20" fill="none" stroke="#94a3b8" strokeLinecap="round" strokeWidth={2} />
+                <path d="M0,20 Q25,10 50,18 T100,12" fill="none" stroke="#10b981" strokeLinecap="round" strokeWidth={2} strokeOpacity={0.6} />
               </svg>
             </div>
           </div>
