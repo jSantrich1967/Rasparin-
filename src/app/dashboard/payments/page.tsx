@@ -31,9 +31,11 @@ async function createPayment(formData: FormData): Promise<{ ok: true } | { ok: f
     revalidatePath("/dashboard/payments");
     revalidatePath("/dashboard/reconciliation");
     revalidatePath("/dashboard");
+    revalidatePath("/stitch");
     return { ok: true };
   } catch (e) {
-    return { ok: false, message: e instanceof Error ? e.message : "Error al guardar" };
+    const msg = e instanceof Error ? e.message : String(e);
+    return { ok: false, message: msg || "Error al guardar. Verifica la conexión a la base de datos." };
   }
 }
 

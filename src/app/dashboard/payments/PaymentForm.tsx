@@ -16,13 +16,19 @@ export function PaymentForm({ createAction, cards }: { createAction: CreateActio
     const form = e.currentTarget;
     const formData = new FormData(form);
     startTransition(async () => {
-      const result = await createAction(formData);
-      if (result.ok) {
-        toast.success("Pago registrado");
-        router.refresh();
-        form.reset();
-      } else {
-        toast.error(result.message);
+      try {
+        const result = await createAction(formData);
+        if (result.ok) {
+          toast.success("Pago registrado");
+          router.refresh();
+          form.reset();
+        } else {
+          toast.error(result.message);
+        }
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : "Error de conexión";
+        toast.error(`No se pudo guardar: ${msg}`);
+        console.error("Payment create error:", err);
       }
     });
   }
