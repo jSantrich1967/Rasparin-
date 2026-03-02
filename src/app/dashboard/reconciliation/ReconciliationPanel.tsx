@@ -1,11 +1,10 @@
 "use client";
 
-import { useTransition } from "react";
+import { useTransition, useState, useRef, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { formatVES } from "@/lib/money";
 import { calcDebtVES } from "@/lib/calc";
-import { useRef } from "react";
 
 type Payment = {
   id: string;
@@ -53,8 +52,50 @@ export function ReconciliationPanel({
   submitAllocations: SubmitAction;
 }) {
   const [isPending, startTransition] = useTransition();
+  const [totalAssigned, setTotalAssigned] = useState(0);
   const router = useRouter();
   const inputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+
+  const paymentTotal = paymentDetail ? Number(paymentDetail.amountVES.toString()) : 0;
+  const allocatedByOp = new Map<string, number>();
+  if (paymentDetail) {
+    for (const a of paymentDetail.allocations) {
+      allocatedByOp.set(a.operationId, Number(a.amountVESApplied.toString()));
+    }
+  }
+
+  const updateTotal = useCallback(() => {
+    let sum = 0;
+    operationsOfCard.forEach((op) => {
+      const input = inputRefs.current[op.id];
+      if (input) sum += parseFloat(input.value) || 0;
+    });
+    setTotalAssigned(sum);
+  }, [operationsOfCard]);
+
+  useEffect(() => {
+    if (operationsOfCard.length > 0) updateTotal();
+  }, [operationsOfCard, updateTotal]);
+
+  const handleAssignClick = useCallback(
+    (opId: string, remaining: number) => {
+      const input = inputRefs.current[opId];
+      if (!input) return;
+      let otherTotal = 0;
+      operationsOfCard.forEach((o) => {
+        if (o.id !== opId) {
+          const inp = inputRefs.current[o.id];
+          if (inp) otherTotal += parseFloat(inp.value) || 0;
+        }
+      });
+      const paymentRemaining = Math.max(0, paymentTotal - otherTotal);
+      const toAssign = Math.min(remaining, paymentRemaining);
+      input.value = toAssign.toFixed(2);
+      updateTotal();
+      input.focus();
+    },
+    [operationsOfCard, paymentTotal, updateTotal]
+  );
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -88,14 +129,6 @@ export function ReconciliationPanel({
     });
   }
 
-  const paymentTotal = paymentDetail ? Number(paymentDetail.amountVES.toString()) : 0;
-  const allocatedByOp = new Map<string, number>();
-  if (paymentDetail) {
-    for (const a of paymentDetail.allocations) {
-      allocatedByOp.set(a.operationId, Number(a.amountVESApplied.toString()));
-    }
-  }
-
   return (
     <div className="space-y-6">
       <div>
@@ -124,7 +157,7 @@ export function ReconciliationPanel({
           </p>
           <p className="text-sm text-slate-300 mt-1">Haz clic en el monto sugerido o escribe uno distinto si hay diferencia.</p>
 
-          <form onSubmit={handleSubmit} className="mt-4 space-y-3">
+          <form key={paymentDetail.id} onSubmit={handleSubmit} className="mt-4 space-y-3">
             <input type="hidden" name="paymentId" value={paymentDetail.id} />
             <div className="overflow-x-auto -mx-4 sm:mx-0">
               <table className="w-full text-sm border-collapse min-w-[500px]">
@@ -155,13 +188,7 @@ export function ReconciliationPanel({
                             {remaining > 0 && (
                               <button
                                 type="button"
-                                onClick={() => {
-                                  const input = inputRefs.current[op.id];
-                                  if (input) {
-                                    input.value = suggestedAmount;
-                                    input.focus();
-                                  }
-                                }}
+                                onClick={() => handleAssignClick(op.id, remaining)}
                                 className="px-2 py-1 rounded-lg bg-electric-blue/20 text-electric-blue text-xs font-semibold hover:bg-electric-blue/30 transition-colors"
                               >
                                 {formatVES(remaining)}
@@ -176,6 +203,7 @@ export function ReconciliationPanel({
                               inputMode="decimal"
                               defaultValue={currentForThisPayment || ""}
                               placeholder="0"
+                              onChange={updateTotal}
                               className="w-24 sm:w-28 rounded-lg border border-white/20 bg-slate-900/50 px-2 py-1.5 text-right text-sm text-white placeholder-slate-500 focus:border-electric-blue focus:outline-none focus:ring-2 focus:ring-electric-blue/30"
                             />
                           </div>
@@ -192,9 +220,17 @@ export function ReconciliationPanel({
                 <p className="text-slate-400 text-xs">El pago es de {paymentDetail.card.alias}. Necesitas operaciones OPEN o SETTLED de la misma tarjeta.</p>
               </div>
             ) : (
-              <p className="text-slate-400 text-xs">Clic en el monto azul para llenar, o escribe uno distinto. Total máx: {formatVES(paymentDetail.amountVES.toString())}.</p>
+              <>
+                <div className={`flex items-center gap-2 text-sm font-medium ${totalAssigned > paymentTotal ? "text-red-400" : "text-slate-300"}`}>
+                  <span>Total asignado:</span>
+                  <span>{formatVES(totalAssigned)}</span>
+                  <span>/ {formatVES(paymentDetail.amountVES.toString())}</span>
+                  {totalAssigned > paymentTotal && <span className="text-xs">(reduce el total)</span>}
+                </div>
+                <p className="text-slate-400 text-xs">Clic en el monto azul para llenar (se limita al pago disponible). O escribe uno distinto.</p>
+              </>
             )}
-            <button type="submit" disabled={isPending || operationsOfCard.length === 0} className="btn-primary mt-2">
+            <button type="submit" disabled={isPending || operationsOfCard.length === 0 || totalAssigned > paymentTotal} className="btn-primary mt-2">
               {isPending ? "Guardando…" : "Guardar conciliación"}
             </button>
           </form>
