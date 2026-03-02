@@ -22,6 +22,7 @@ async function submitAllocations(formData: FormData): Promise<{ ok: true } | { o
     revalidatePath(`/dashboard/reconciliation?payment=${paymentId}`);
     revalidatePath("/dashboard/payments");
     revalidatePath("/dashboard");
+    revalidatePath("/stitch");
   }
   return result;
 }

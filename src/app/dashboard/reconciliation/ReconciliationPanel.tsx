@@ -60,13 +60,28 @@ export function ReconciliationPanel({
     const form = e.currentTarget;
     const formData = new FormData(form);
     formData.set("paymentId", paymentDetail.id);
+    // Validar que al menos un monto sea > 0
+    const hasAnyAmount = operationsOfCard.some((op) => {
+      const val = formData.get(`op_${op.id}`);
+      return val && parseFloat(String(val)) > 0;
+    });
+    if (!hasAnyAmount) {
+      toast.error("Ingresa al menos un monto en VES a asignar");
+      return;
+    }
     startTransition(async () => {
-      const result = await submitAllocations(formData);
-      if (result.ok) {
-        toast.success("Conciliación guardada");
-        router.refresh();
-      } else {
-        toast.error(result.message);
+      try {
+        const result = await submitAllocations(formData);
+        if (result.ok) {
+          toast.success("Conciliación guardada");
+          router.refresh();
+        } else {
+          toast.error(result.message);
+        }
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : "Error de conexión";
+        toast.error(`No se pudo guardar: ${msg}`);
+        console.error("Reconciliation submit error:", err);
       }
     });
   }
@@ -150,8 +165,13 @@ export function ReconciliationPanel({
                 </tbody>
               </table>
             </div>
-            {operationsOfCard.length === 0 && (
-              <p className="text-slate-500 text-sm">No hay operaciones OPEN/SETTLED en esta tarjeta para asignar.</p>
+            {operationsOfCard.length === 0 ? (
+              <div className="space-y-1">
+                <p className="text-amber-500 text-sm font-medium">No hay operaciones para asignar en esta tarjeta.</p>
+                <p className="text-slate-500 text-xs">El pago es de {paymentDetail.card.alias}. Necesitas operaciones OPEN o SETTLED de la misma tarjeta. Crea operaciones en Operaciones y asegúrate de usar la misma tarjeta.</p>
+              </div>
+            ) : (
+              <p className="text-slate-500 text-xs">Ingresa el monto en VES a asignar a cada operación. El total no puede superar {formatVES(paymentDetail.amountVES.toString())}.</p>
             )}
             <button type="submit" disabled={isPending || operationsOfCard.length === 0} className="btn-primary mt-2">
               {isPending ? "Guardando…" : "Guardar conciliación"}

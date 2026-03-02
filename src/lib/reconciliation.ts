@@ -16,7 +16,7 @@ export async function applyAllocations(params: {
     where: { id: paymentId },
     include: { allocations: true },
   });
-  if (!payment) return { ok: false, message: "Payment not found" };
+  if (!payment) return { ok: false, message: "Pago no encontrado" };
 
   // Collapse items by operationId and round to 2 decimals (VES rule)
   const itemsByOp = new Map<string, ReturnType<typeof round2>>();
@@ -36,15 +36,15 @@ export async function applyAllocations(params: {
   });
 
   if (operations.length !== operationIds.length) {
-    return { ok: false, message: "Some operations were not found" };
+    return { ok: false, message: "Algunas operaciones no se encontraron" };
   }
 
   for (const op of operations) {
     if (op.cardId !== payment.cardId) {
-      return { ok: false, message: "Payment and Operation must belong to the same card" };
+      return { ok: false, message: "El pago y la operación deben ser de la misma tarjeta" };
     }
     if (op.status === "CANCELLED") {
-      return { ok: false, message: "Cannot allocate to a CANCELLED operation" };
+      return { ok: false, message: "No se puede asignar a una operación cancelada" };
     }
   }
 
@@ -71,7 +71,7 @@ export async function applyAllocations(params: {
 
   const finalAllocated = unchangedOtherAlloc.add(newTotalForPayment);
   if (finalAllocated.gt(paymentAmount.add(SETTLE_TOLERANCE_VES))) {
-    return { ok: false, message: "Allocations exceed payment amount" };
+    return { ok: false, message: "El total asignado supera el monto del pago" };
   }
 
   // Validate operation remaining VES (debtVES computed from stored rate snapshot)
@@ -84,7 +84,7 @@ export async function applyAllocations(params: {
 
     const remaining = round2(debtVES.sub(nextAllocatedTotal));
     if (remaining.lt(d(0).sub(SETTLE_TOLERANCE_VES))) {
-      return { ok: false, message: `Allocations exceed remaining debt for operation ${op.id}` };
+      return { ok: false, message: "El monto asignado supera la deuda pendiente de una operación" };
     }
   }
 
