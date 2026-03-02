@@ -51,11 +51,14 @@ export default function LoginForm({ from }: { from: string }) {
             <label className="block text-sm font-medium text-slate-300 mb-1.5">Contraseña</label>
             <input
               type="password"
+              name="login-password"
               className="w-full rounded-lg border border-slate-600 bg-slate-900 px-3 py-3 text-base text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 min-h-[44px]"
               style={{ fontSize: "16px" }}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              autoComplete="current-password"
+              onFocus={(e) => e.currentTarget.removeAttribute("readonly")}
+              readOnly
+              autoComplete="off"
               placeholder="Escribe tu contraseña"
             />
           </div>
