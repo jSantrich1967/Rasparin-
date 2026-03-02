@@ -72,14 +72,20 @@ model Counterparty {
 }
 
 model FXRate {
-  id        String   @id @default(cuid())
-  /// Only date is relevant; normalize to 00:00:00Z in app.
-  date      DateTime @unique
-  /// VES per 1 USD
-  bcvRate   Decimal  @db.Decimal(18, 6)
-  source    String   @default("manual")
-  createdAt DateTime @default(now())
+  id          String    @id @default(cuid())
+  /// Momento exacto en que aplica esta tasa (permite múltiples tasas por día)
+  effectiveAt DateTime?
+  /// Fecha (legacy); si effectiveAt es null, se usa date para lookup
+  date        DateTime?
+  /// VES per 1 USD (tasa oficial BCV)
+  bcvRate     Decimal   @db.Decimal(18, 6)
+  /// VES per 1 USD (tasa de mercado/paralela); opcional, para ganancia realizada
+  marketRate  Decimal?  @db.Decimal(18, 6)
+  source      String    @default("manual")
+  createdAt   DateTime  @default(now())
 
+  @@unique([effectiveAt])
+  @@index([effectiveAt])
   @@index([date])
 }
 

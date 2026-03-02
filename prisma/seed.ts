@@ -35,14 +35,15 @@ async function main() {
     create: { name: "Comercio ABC", type: "COMERCIO" },
   });
 
-  // Create FX rate for today
+  // Create FX rate (permite múltiples tasas por día)
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0);
-  await prisma.fXRate.upsert({
-    where: { date: today },
-    update: { bcvRate: 36.5 },
-    create: { date: today, bcvRate: 36.5, source: "seed" },
-  });
+  const existing = await prisma.fXRate.findFirst({ where: { effectiveAt: today } });
+  if (!existing) {
+    await prisma.fXRate.create({
+      data: { effectiveAt: today, bcvRate: 36.5, source: "seed" },
+    });
+  }
 
   // Optional: one sample operation
   const op = await prisma.operation.findFirst({ where: { cardId: card.id } });

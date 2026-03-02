@@ -8,6 +8,7 @@ export type StitchDashboardProps = {
   totalDebtVES: number;
   totalNetUsdReceived: number;
   bcvRate: number;
+  marketRate?: number;
   realizedProfitUSD: number;
   pendingDebtUSD: number;
   opsCount: number;
@@ -23,6 +24,7 @@ export function StitchDashboard({
   totalDebtVES,
   totalNetUsdReceived,
   bcvRate,
+  marketRate = 0,
   realizedProfitUSD,
   pendingDebtUSD,
   opsCount,
@@ -95,11 +97,18 @@ export function StitchDashboard({
                 </div>
                 <p className="text-slate-500 text-xs mt-1 font-medium tracking-tight">≈ {formatVES(totalDebtVES)} VES <span className="text-[10px] opacity-40 italic ml-1">({bcvRate > 0 ? bcvRate.toFixed(2) : "—"} BCV)</span></p>
               </div>
-              {bcvRate > 0 && (
-                <div className="bg-white/5 px-2 py-1 rounded-lg text-[10px] font-bold flex items-center gap-1 border border-white/10">
-                  <span className="material-symbols-outlined text-xs">currency_exchange</span> {bcvRate.toFixed(2)} VES
-                </div>
-              )}
+              <div className="flex flex-col gap-1 items-end">
+                {bcvRate > 0 && (
+                  <div className="bg-white/5 px-2 py-1 rounded-lg text-[10px] font-bold flex items-center gap-1 border border-white/10">
+                    <span className="material-symbols-outlined text-xs">account_balance</span> BCV {bcvRate.toFixed(2)}
+                  </div>
+                )}
+                {marketRate > 0 && (
+                  <div className="bg-emerald-500/10 px-2 py-1 rounded-lg text-[10px] font-bold flex items-center gap-1 border border-emerald-500/20 text-emerald-accent">
+                    <span className="material-symbols-outlined text-xs">trending_up</span> Mercado {marketRate.toFixed(2)}
+                  </div>
+                )}
+              </div>
             </div>
             <div className="h-16 w-full opacity-60">
               <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 300 60">

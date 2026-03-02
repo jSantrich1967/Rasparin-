@@ -1,14 +1,14 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { getLastBcvRateForDate } from "@/lib/fx";
-import { calcDebtVES, calcFees, calcProfitRealizedUSD, calcUsdEquivalentPaid } from "@/lib/calc";
+import { getLastBcvRateForDate, buildRateLookup } from "@/lib/fx";
+import { calcDebtVES, calcFees, calcProfitRealizedUSDWithMarket } from "@/lib/calc";
 import { d, round2, formatUSD } from "@/lib/money";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   try {
-    const [banks, cards, opsOpen, allocationsWithDetails, openOperations] = await Promise.all([
+    const [banks, cards, opsOpen, allocationsWithDetails, openOperations, allFxRates] = await Promise.all([
       prisma.bank.count(),
       prisma.card.count(),
       prisma.operation.count({ where: { status: "OPEN" } }),
@@ -19,8 +19,10 @@ export default async function DashboardPage() {
         where: { status: "OPEN" },
         include: { counterparty: true },
       }),
+      prisma.fXRate.findMany({ orderBy: { date: "desc" }, take: 365 }),
     ]);
 
+    const getRate = buildRateLookup(allFxRates);
     let realizedProfitUSD = d(0);
     for (const a of allocationsWithDetails) {
       const op = a.operation;
@@ -35,11 +37,15 @@ export default async function DashboardPage() {
         merchantFeePercent: op.merchantFeePercent.toString(),
       });
       const shareUsdCashReceived = fees.usdCashReceived.mul(share);
-      const usdRealPaid = calcUsdEquivalentPaid({
-        amountVES: a.amountVESApplied.toString(),
-        bcvRateOnPayment: payment.bcvRateOnPayment.toString(),
-      });
-      realizedProfitUSD = realizedProfitUSD.add(calcProfitRealizedUSD({ usdCashReceived: shareUsdCashReceived, usdRealPaid }));
+      const rateInfo = getRate(payment.date);
+      const marketOrBcv = rateInfo?.marketRate ?? payment.bcvRateOnPayment.toString();
+      realizedProfitUSD = realizedProfitUSD.add(
+        calcProfitRealizedUSDWithMarket({
+          usdCashReceived: shareUsdCashReceived,
+          amountVESApplied: amountVES,
+          marketOrBcvRate: marketOrBcv,
+        })
+      );
     }
     realizedProfitUSD = round2(realizedProfitUSD);
 
@@ -107,7 +113,7 @@ export default async function DashboardPage() {
           <div className="flex flex-wrap gap-2 sm:gap-3">
             <Link href="/dashboard/reports" className="rounded-lg stitch-glass px-4 py-2 text-sm font-medium text-electric-blue hover:bg-white/5 transition-colors">Reportes</Link>
             <Link href="/stitch" className="rounded-lg stitch-glass px-4 py-2 text-sm font-medium text-slate-300 hover:bg-white/5 transition-colors">Inicio</Link>
-            <Link href="/dashboard/fx-rates" className="rounded-lg stitch-glass px-4 py-2 text-sm font-medium text-slate-300 hover:bg-white/5 transition-colors">Tasas BCV</Link>
+            <Link href="/dashboard/fx-rates" className="rounded-lg stitch-glass px-4 py-2 text-sm font-medium text-slate-300 hover:bg-white/5 transition-colors">Tasas BCV y Mercado</Link>
             <Link href="/dashboard/counterparties" className="rounded-lg stitch-glass px-4 py-2 text-sm font-medium text-slate-300 hover:bg-white/5 transition-colors">Contrapartes</Link>
             <Link href="/dashboard/operations" className="rounded-lg stitch-glass px-4 py-2 text-sm font-medium text-slate-300 hover:bg-white/5 transition-colors">Operaciones</Link>
             <Link href="/dashboard/payments" className="rounded-lg stitch-glass px-4 py-2 text-sm font-medium text-slate-300 hover:bg-white/5 transition-colors">Pagos</Link>

@@ -56,6 +56,22 @@ export function calcProfitRealizedUSD(params: {
   return d(params.usdCashReceived).sub(d(params.usdRealPaid)).toDecimalPlaces(2, Decimal.ROUND_HALF_UP);
 }
 
+/**
+ * Ganancia realizada usando tasa de mercado para el "costo" del pago en VES.
+ * profit = usdCashReceived - (amountVESApplied / marketRate)
+ * Si marketRate no se provee, usa bcvRateOnPayment (comportamiento anterior).
+ */
+export function calcProfitRealizedUSDWithMarket(params: {
+  usdCashReceived: Decimal.Value;
+  amountVESApplied: Decimal.Value;
+  marketOrBcvRate: Decimal.Value; // tasa de mercado o BCV para convertir VES pagados a USD
+}): Decimal {
+  const rate = d(params.marketOrBcvRate);
+  if (rate.lte(0)) throw new Error("marketOrBcvRate must be > 0");
+  const usdCostOfPayment = d(params.amountVESApplied).div(rate);
+  return d(params.usdCashReceived).sub(usdCostOfPayment).toDecimalPlaces(2, Decimal.ROUND_HALF_UP);
+}
+
 export function calcROI(params: {
   profitUSD: Decimal.Value;
   usdCashReceived: Decimal.Value;

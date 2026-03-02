@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
-import { getLatestBcvRate } from "@/lib/fx";
-import { calcDebtVES, calcFees, calcProfitRealizedUSD, calcUsdEquivalentPaid } from "@/lib/calc";
+import { getLatestBcvRate, buildRateLookup } from "@/lib/fx";
+import { calcDebtVES, calcFees, calcProfitRealizedUSDWithMarket } from "@/lib/calc";
 import { d, round2 } from "@/lib/money";
 import { StitchDashboard } from "@/components/stitch/StitchDashboard";
 
@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export default async function StitchPage() {
   try {
-    const [openOperations, allocationsWithDetails, latestRate, fxRatesRecent, recentOps] = await Promise.all([
+    const [openOperations, allocationsWithDetails, latestRate, fxRatesRecent, recentOps, allFxRates] = await Promise.all([
       prisma.operation.findMany({
         where: { status: "OPEN" },
         include: { counterparty: true },
@@ -17,16 +17,14 @@ export default async function StitchPage() {
         include: { operation: true, payment: true },
       }),
       getLatestBcvRate(),
-      prisma.fXRate.findMany({
-        orderBy: { date: "desc" },
-        take: 30,
-      }),
+      prisma.fXRate.findMany({ take: 50 }),
       prisma.operation.findMany({
         where: { status: { not: "CANCELLED" } },
         include: { counterparty: true },
         orderBy: { date: "desc" },
         take: 5,
       }),
+      prisma.fXRate.findMany({ take: 365 }),
     ]);
 
     // Deuda total pendiente (OPEN): suma de usdCharged y debtVES
@@ -48,7 +46,8 @@ export default async function StitchPage() {
     totalDebtVES = round2(totalDebtVES);
     totalNetUsdReceived = round2(totalNetUsdReceived);
 
-    // Ganancia realizada
+    // Ganancia realizada (usa tasa de mercado si existe; si no, BCV)
+    const getRate = buildRateLookup(allFxRates);
     let realizedProfitUSD = d(0);
     for (const a of allocationsWithDetails) {
       const op = a.operation;
@@ -63,16 +62,21 @@ export default async function StitchPage() {
         merchantFeePercent: op.merchantFeePercent.toString(),
       });
       const shareUsdCashReceived = fees.usdCashReceived.mul(share);
-      const usdRealPaid = calcUsdEquivalentPaid({
-        amountVES: a.amountVESApplied.toString(),
-        bcvRateOnPayment: payment.bcvRateOnPayment.toString(),
-      });
-      realizedProfitUSD = realizedProfitUSD.add(calcProfitRealizedUSD({ usdCashReceived: shareUsdCashReceived, usdRealPaid }));
+      const rateInfo = getRate(payment.date);
+      const marketOrBcv = rateInfo?.marketRate ?? payment.bcvRateOnPayment.toString();
+      realizedProfitUSD = realizedProfitUSD.add(
+        calcProfitRealizedUSDWithMarket({
+          usdCashReceived: shareUsdCashReceived,
+          amountVESApplied: amountVES,
+          marketOrBcvRate: marketOrBcv,
+        })
+      );
     }
     realizedProfitUSD = round2(realizedProfitUSD);
 
-    // Tasa BCV actual
+    // Tasa BCV y mercado actual
     const bcvRate = latestRate ? Number(latestRate.bcvRate) : 0;
+    const marketRate = latestRate?.marketRate ? Number(latestRate.marketRate) : 0;
 
     // Conteo por estatus
     const [countOpen, countSettled, countCancelled] = await Promise.all([
@@ -86,7 +90,15 @@ export default async function StitchPage() {
     const pctCancelled = totalOps > 0 ? Math.round((countCancelled / totalOps) * 100) : 0;
 
     // Datos para gráfico BCV (últimas tasas)
-    const bcvChartData = fxRatesRecent.reverse().map((r) => ({ date: r.date, rate: Number(r.bcvRate) }));
+    const sortedRates = [...fxRatesRecent].sort((a, b) => {
+      const am = (a.effectiveAt ?? a.date)?.getTime() ?? 0;
+      const bm = (b.effectiveAt ?? b.date)?.getTime() ?? 0;
+      return am - bm;
+    });
+    const bcvChartData = sortedRates.map((r) => ({
+      date: (r.effectiveAt ?? r.date)!,
+      rate: Number(r.bcvRate),
+    }));
 
     // Actividad reciente
     const activityItems = recentOps.map((op) => ({
@@ -103,6 +115,7 @@ export default async function StitchPage() {
         totalDebtVES={Number(totalDebtVES)}
         totalNetUsdReceived={Number(totalNetUsdReceived)}
         bcvRate={bcvRate}
+        marketRate={marketRate}
         realizedProfitUSD={Number(realizedProfitUSD)}
         pendingDebtUSD={Number(totalDebtUSD)}
         opsCount={totalOps}
