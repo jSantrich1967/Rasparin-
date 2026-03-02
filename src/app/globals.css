@@ -18,6 +18,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-charcoal: #0a0c10;
+  --color-electric-blue: #007AFF;
+  --color-emerald-accent: #10b981;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
