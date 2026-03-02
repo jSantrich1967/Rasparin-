@@ -45,10 +45,10 @@ export default async function FXRatesPage() {
   const rates = await prisma.fXRate.findMany({ orderBy: { date: "desc" }, take: 100 });
   return (
     <PageSection title="Tasas BCV" description="Carga la tasa BCV (VES por 1 USD) por fecha. Se usa para deuda en VES y ganancia no realizada.">
-      <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm mb-6">
+      <div className="rounded-2xl stitch-glass p-4 sm:p-5 shadow-sm mb-6">
         <FXRateForm createAction={createFXRate} />
       </div>
-      <ul className="divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+      <ul className="divide-y divide-white/10 rounded-2xl stitch-glass shadow-sm overflow-hidden">
         {rates.map((r) => (
           <FXRateRow key={r.id} rate={r} deleteAction={deleteFXRate} />
         ))}

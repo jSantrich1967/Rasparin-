@@ -63,10 +63,10 @@ export default async function PaymentsPage() {
 
   return (
     <PageSection title="Pagos" description="Pagos en VES a la tarjeta. Luego concilia en la pestaña Conciliación.">
-      <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm mb-6">
+      <div className="rounded-2xl stitch-glass p-4 sm:p-5 shadow-sm mb-6">
         <PaymentForm createAction={createPayment} cards={cards} />
       </div>
-      <ul className="divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+      <ul className="divide-y divide-white/10 rounded-2xl stitch-glass shadow-sm overflow-hidden">
         {payments.map((p) => (
           <PaymentRow key={p.id} payment={p} deleteAction={deletePayment} />
         ))}

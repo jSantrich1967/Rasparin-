@@ -36,10 +36,10 @@ export function PaymentRow({ payment, deleteAction }: { payment: Payment; delete
   }
 
   return (
-    <li className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 px-4 sm:px-5 py-3 sm:py-4 hover:bg-slate-50/50 transition-colors">
+    <li className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 px-4 sm:px-5 py-3 sm:py-4 hover:bg-white/5 transition-colors">
       <div className="flex flex-wrap gap-2 items-center text-sm">
         <span className="font-mono text-slate-600">{new Date(payment.date).toISOString().slice(0, 10)}</span>
-        <span className="text-slate-900">{payment.card.alias} ({payment.card.bank?.name})</span>
+        <span className="text-white">{payment.card.alias} ({payment.card.bank?.name})</span>
         <span className="font-medium">{formatVES(payment.amountVES.toString())} VES</span>
         <span className="text-slate-500">Asignado: {formatVES(allocated)}</span>
         <span className={remaining > 0 ? "text-amber-600" : "text-emerald-600"}>Restante: {formatVES(remaining)}</span>

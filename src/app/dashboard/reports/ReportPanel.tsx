@@ -137,7 +137,7 @@ export function ReportPanel({ rows, summary }: ReportPanelProps) {
         <button
           type="button"
           onClick={handlePrint}
-          className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          className="inline-flex items-center gap-2 rounded-lg stitch-glass px-4 py-2 text-sm font-medium text-slate-300 hover:bg-white/5"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
@@ -147,7 +147,7 @@ export function ReportPanel({ rows, summary }: ReportPanelProps) {
         <button
           type="button"
           onClick={handleExportPDF}
-          className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          className="inline-flex items-center gap-2 rounded-lg stitch-glass px-4 py-2 text-sm font-medium text-slate-300 hover:bg-white/5"
         >
           <span className="font-bold text-red-600">PDF</span>
           Exportar PDF
@@ -155,7 +155,7 @@ export function ReportPanel({ rows, summary }: ReportPanelProps) {
         <button
           type="button"
           onClick={handleExportExcel}
-          className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          className="inline-flex items-center gap-2 rounded-lg stitch-glass px-4 py-2 text-sm font-medium text-slate-300 hover:bg-white/5"
         >
           <span className="font-bold text-emerald-700">Excel</span>
           Exportar Excel
@@ -163,45 +163,45 @@ export function ReportPanel({ rows, summary }: ReportPanelProps) {
       </div>
 
       {/* Tabla de reporte */}
-      <div ref={tableRef} className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+      <div ref={tableRef} className="rounded-2xl stitch-glass overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm" id="report-table">
             <thead>
-              <tr className="bg-slate-100 border-b border-slate-200">
-                <th className="text-left px-4 py-3 font-medium text-slate-700">Fecha</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-700">Tarjeta</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-700">Banco</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-700">Contraparte</th>
-                <th className="text-right px-4 py-3 font-medium text-slate-700">USD Cargado</th>
-                <th className="text-right px-4 py-3 font-medium text-slate-700">Fee Banco %</th>
-                <th className="text-right px-4 py-3 font-medium text-slate-700">Fee Comercio %</th>
-                <th className="text-right px-4 py-3 font-medium text-slate-700">Fee Banco USD</th>
-                <th className="text-right px-4 py-3 font-medium text-slate-700">Fee Comercio USD</th>
-                <th className="text-right px-4 py-3 font-medium text-slate-700">Total Fees USD</th>
-                <th className="text-right px-4 py-3 font-medium text-slate-700">USD Recibido</th>
-                <th className="text-right px-4 py-3 font-medium text-slate-700">Deuda VES</th>
-                <th className="text-center px-4 py-3 font-medium text-slate-700">Estado</th>
+              <tr className="bg-white/5 border-b border-white/10">
+                <th className="text-left px-4 py-3 font-medium text-slate-400">Fecha</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-400">Tarjeta</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-400">Banco</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-400">Contraparte</th>
+                <th className="text-right px-4 py-3 font-medium text-slate-400">USD Cargado</th>
+                <th className="text-right px-4 py-3 font-medium text-slate-400">Fee Banco %</th>
+                <th className="text-right px-4 py-3 font-medium text-slate-400">Fee Comercio %</th>
+                <th className="text-right px-4 py-3 font-medium text-slate-400">Fee Banco USD</th>
+                <th className="text-right px-4 py-3 font-medium text-slate-400">Fee Comercio USD</th>
+                <th className="text-right px-4 py-3 font-medium text-slate-400">Total Fees USD</th>
+                <th className="text-right px-4 py-3 font-medium text-slate-400">USD Recibido</th>
+                <th className="text-right px-4 py-3 font-medium text-slate-400">Deuda VES</th>
+                <th className="text-center px-4 py-3 font-medium text-slate-400">Estado</th>
               </tr>
             </thead>
             <tbody>
               {rows.map((r) => (
-                <tr key={r.id} className="border-b border-slate-100 hover:bg-slate-50/50">
-                  <td className="px-4 py-2.5 font-mono text-slate-600">{r.date}</td>
-                  <td className="px-4 py-2.5 text-slate-900">{r.cardAlias}</td>
-                  <td className="px-4 py-2.5 text-slate-700">{r.bankName}</td>
-                  <td className="px-4 py-2.5 text-slate-700">{r.counterpartyName}</td>
-                  <td className="px-4 py-2.5 text-right font-medium">{formatUSD(r.usdCharged)}</td>
-                  <td className="px-4 py-2.5 text-right text-slate-600">{r.bankFeePercent.toFixed(2)}%</td>
-                  <td className="px-4 py-2.5 text-right text-slate-600">{r.merchantFeePercent.toFixed(2)}%</td>
-                  <td className="px-4 py-2.5 text-right text-slate-600">{formatUSD(r.bankFeeUSD)}</td>
-                  <td className="px-4 py-2.5 text-right text-slate-600">{formatUSD(r.merchantFeeUSD)}</td>
-                  <td className="px-4 py-2.5 text-right font-medium text-amber-700">{formatUSD(r.totalFeeUSD)}</td>
-                  <td className="px-4 py-2.5 text-right font-medium text-emerald-700">{formatUSD(r.usdCashReceived)}</td>
-                  <td className="px-4 py-2.5 text-right font-medium">{formatVES(r.debtVES)}</td>
+                <tr key={r.id} className="border-b border-white/5 hover:bg-white/5">
+                  <td className="px-4 py-2.5 font-mono text-slate-500">{r.date}</td>
+                  <td className="px-4 py-2.5 text-white">{r.cardAlias}</td>
+                  <td className="px-4 py-2.5 text-slate-400">{r.bankName}</td>
+                  <td className="px-4 py-2.5 text-slate-400">{r.counterpartyName}</td>
+                  <td className="px-4 py-2.5 text-right font-medium text-white">{formatUSD(r.usdCharged)}</td>
+                  <td className="px-4 py-2.5 text-right text-slate-500">{r.bankFeePercent.toFixed(2)}%</td>
+                  <td className="px-4 py-2.5 text-right text-slate-500">{r.merchantFeePercent.toFixed(2)}%</td>
+                  <td className="px-4 py-2.5 text-right text-slate-500">{formatUSD(r.bankFeeUSD)}</td>
+                  <td className="px-4 py-2.5 text-right text-slate-500">{formatUSD(r.merchantFeeUSD)}</td>
+                  <td className="px-4 py-2.5 text-right font-medium text-amber-400">{formatUSD(r.totalFeeUSD)}</td>
+                  <td className="px-4 py-2.5 text-right font-medium text-emerald-accent">{formatUSD(r.usdCashReceived)}</td>
+                  <td className="px-4 py-2.5 text-right font-medium text-white">{formatVES(r.debtVES)}</td>
                   <td className="px-4 py-2.5 text-center">
                     <span
                       className={`font-medium ${
-                        r.status === "OPEN" ? "text-amber-600" : r.status === "SETTLED" ? "text-emerald-600" : "text-slate-500"
+                        r.status === "OPEN" ? "text-amber-400" : r.status === "SETTLED" ? "text-emerald-accent" : "text-slate-500"
                       }`}
                     >
                       {r.status}
@@ -211,17 +211,17 @@ export function ReportPanel({ rows, summary }: ReportPanelProps) {
               ))}
             </tbody>
             <tfoot>
-              <tr className="bg-slate-100 font-semibold border-t-2 border-slate-300">
-                <td className="px-4 py-3 text-slate-700" colSpan={4}>
+              <tr className="bg-white/10 font-semibold border-t-2 border-white/20">
+                <td className="px-4 py-3 text-slate-300" colSpan={4}>
                   Total ({summary.count} operaciones)
                 </td>
-                <td className="px-4 py-3 text-right">{formatUSD(summary.totalUsdCharged)}</td>
+                <td className="px-4 py-3 text-right text-white">{formatUSD(summary.totalUsdCharged)}</td>
                 <td className="px-4 py-3" colSpan={2} />
-                <td className="px-4 py-3 text-right text-slate-600">{formatUSD(summary.totalBankFeeUSD)}</td>
-                <td className="px-4 py-3 text-right text-slate-600">{formatUSD(summary.totalMerchantFeeUSD)}</td>
-                <td className="px-4 py-3 text-right text-amber-700">{formatUSD(summary.totalFeesUSD)}</td>
-                <td className="px-4 py-3 text-right text-emerald-700">{formatUSD(summary.totalUsdCashReceived)}</td>
-                <td className="px-4 py-3 text-right">{formatVES(summary.totalDebtVES)}</td>
+                <td className="px-4 py-3 text-right text-slate-400">{formatUSD(summary.totalBankFeeUSD)}</td>
+                <td className="px-4 py-3 text-right text-slate-400">{formatUSD(summary.totalMerchantFeeUSD)}</td>
+                <td className="px-4 py-3 text-right text-amber-400">{formatUSD(summary.totalFeesUSD)}</td>
+                <td className="px-4 py-3 text-right text-emerald-accent">{formatUSD(summary.totalUsdCashReceived)}</td>
+                <td className="px-4 py-3 text-right text-white">{formatVES(summary.totalDebtVES)}</td>
                 <td className="px-4 py-3" />
               </tr>
             </tfoot>

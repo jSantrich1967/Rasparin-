@@ -69,9 +69,9 @@ export function CounterpartyRow({
   }
 
   return (
-    <li className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 px-4 sm:px-5 py-3 sm:py-4 hover:bg-slate-50/50 transition-colors">
+    <li className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 px-4 sm:px-5 py-3 sm:py-4 hover:bg-white/5 transition-colors">
       <span className="text-sm">
-        <strong className="text-slate-900">{counterparty.name}</strong> <span className="text-slate-500">({counterparty.type})</span>
+        <strong className="text-white">{counterparty.name}</strong> <span className="text-slate-500">({counterparty.type})</span>
         {counterparty.contact && <span className="text-slate-600 ml-2">{counterparty.contact}</span>}
       </span>
       <div className="flex gap-3">

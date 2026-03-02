@@ -31,10 +31,10 @@ export function FXRateRow({ rate, deleteAction }: { rate: FXRate; deleteAction: 
   }
 
   return (
-    <li className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 px-4 sm:px-5 py-3 sm:py-4 hover:bg-slate-50/50 transition-colors">
-      <span className="font-mono text-slate-700">{new Date(rate.date).toISOString().slice(0, 10)}</span>
+    <li className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 px-4 sm:px-5 py-3 sm:py-4 hover:bg-white/5 transition-colors">
+      <span className="font-mono text-slate-500">{new Date(rate.date).toISOString().slice(0, 10)}</span>
       <div className="flex gap-3 items-center">
-        <span className="font-medium text-slate-900">{formatVES(rate.bcvRate.toString())} VES/USD</span>
+        <span className="font-medium text-white">{formatVES(rate.bcvRate.toString())} VES/USD</span>
         <button type="button" onClick={handleDelete} disabled={isPending} className="btn-danger">Eliminar</button>
       </div>
     </li>

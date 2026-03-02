@@ -73,6 +73,40 @@ select {
   @apply rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md;
 }
 
+/* Stitch theme - dashboard y login */
+[data-dashboard] input,
+[data-dashboard] select {
+  @apply border-slate-600 bg-slate-800/50 text-white placeholder-slate-500;
+}
+[data-dashboard] input:focus,
+[data-dashboard] select:focus {
+  @apply border-electric-blue ring-electric-blue/30;
+}
+[data-dashboard] .btn-primary {
+  @apply bg-gradient-to-tr from-electric-blue to-blue-400 hover:opacity-90;
+}
+[data-dashboard] .btn-secondary {
+  @apply border-white/20 bg-white/5 text-slate-300 hover:bg-white/10;
+}
+[data-dashboard] .btn-danger {
+  @apply bg-red-500/20 text-red-400 hover:bg-red-500/30 border-red-500/30;
+}
+.stitch-bg {
+  background: radial-gradient(circle at 50% 0%, #1e293b 0%, #0a0c10 100%);
+  min-height: 100vh;
+}
+.stitch-glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+.stitch-glass-nav {
+  background: rgba(10, 12, 16, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
 /* Print - ocultar sidebar, nav y botones en reportes */
 @media print {
   aside,
@@ -83,5 +117,14 @@ select {
   }
   main {
     padding: 0 !important;
+  }
+  /* Tabla de reportes legible al imprimir */
+  #report-table th,
+  #report-table td {
+    color: #0f172a !important;
+    background: white !important;
+  }
+  #report-table tr {
+    border-color: #e2e8f0 !important;
   }
 }

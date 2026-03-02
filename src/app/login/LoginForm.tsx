@@ -13,11 +13,17 @@ export default function LoginForm({ from }: { from: string }) {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-y-auto">
-      {/* Solid background (no backdrop-blur) - backdrop-blur blocks touch/input on mobile Safari */}
-      <div className="w-full max-w-md rounded-2xl border border-slate-700/50 bg-slate-800 p-6 sm:p-8 shadow-2xl my-auto">
-        <h1 className="text-2xl font-bold text-white">Tarjeteando</h1>
-        <p className="text-slate-400 text-sm mt-1">Inicia sesión para continuar</p>
+    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 stitch-bg overflow-y-auto">
+      <div className="w-full max-w-md rounded-3xl stitch-glass p-6 sm:p-8 my-auto">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-electric-blue to-blue-400 flex items-center justify-center text-white shadow-[0_0_15px_rgba(0,122,255,0.3)]">
+            <span className="material-symbols-outlined text-2xl">account_balance_wallet</span>
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-white">Tarjeteando</h1>
+            <p className="text-slate-400 text-sm mt-0.5">Inicia sesión para continuar</p>
+          </div>
+        </div>
 
         <form
           className="login-form mt-6 space-y-4 touch-manipulation"
@@ -67,7 +73,7 @@ export default function LoginForm({ from }: { from: string }) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-white text-slate-900 py-3 text-base font-semibold hover:bg-slate-100 transition-colors disabled:opacity-50 min-h-[48px]"
+            className="w-full rounded-xl bg-gradient-to-tr from-electric-blue to-blue-400 text-white py-3 text-base font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 min-h-[48px] shadow-[0_4px_14px_rgba(0,122,255,0.4)]"
           >
             {loading ? "Entrando…" : "Entrar"}
           </button>

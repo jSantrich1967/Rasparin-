@@ -77,10 +77,10 @@ export default async function CardsPage() {
   const banks = await prisma.bank.findMany({ orderBy: { name: "asc" } });
   return (
     <PageSection title="Tarjetas" description="Gestiona las tarjetas de crédito asociadas a tus bancos.">
-      <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm mb-6">
+      <div className="rounded-2xl stitch-glass p-4 sm:p-5 shadow-sm mb-6">
         <CardForm createAction={createCard} banks={banks} />
       </div>
-      <ul className="divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+      <ul className="divide-y divide-white/10 rounded-2xl stitch-glass shadow-sm overflow-hidden">
         {cards.map((c) => (
           <CardRow
             key={c.id}

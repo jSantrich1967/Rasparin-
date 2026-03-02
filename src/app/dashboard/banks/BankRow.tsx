@@ -59,9 +59,9 @@ export function BankRow({ bank, updateAction, deleteAction }: { bank: Bank; upda
       layout
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 px-4 sm:px-5 py-3 sm:py-4 hover:bg-slate-50/50 transition-colors"
+      className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 px-4 sm:px-5 py-3 sm:py-4 hover:bg-white/5 transition-colors"
     >
-      <span className="font-medium text-slate-900">{bank.name}</span>
+      <span className="font-medium text-white">{bank.name}</span>
       <div className="flex gap-3">
         <button type="button" onClick={() => setEditing(true)} className="text-sm text-blue-600 hover:underline">Editar</button>
         <button type="button" onClick={handleDelete} disabled={isPending} className="btn-danger">Eliminar</button>

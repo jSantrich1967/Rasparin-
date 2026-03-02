@@ -8,6 +8,6 @@ export default async function LoginPage({
   searchParams: Promise<{ from?: string }>;
 }) {
   const sp = await searchParams;
-  const from = sp.from ?? "/dashboard";
+  const from = sp.from ?? "/stitch";
   return <LoginForm from={from} />;
 }

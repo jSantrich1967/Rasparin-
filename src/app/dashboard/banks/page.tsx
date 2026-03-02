@@ -50,10 +50,10 @@ export default async function BanksPage() {
   const banks = await prisma.bank.findMany({ orderBy: { name: "asc" } });
   return (
     <PageSection title="Bancos" description="Gestiona los bancos asociados a tus tarjetas.">
-      <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm mb-6">
+      <div className="rounded-2xl stitch-glass p-4 sm:p-5 shadow-sm mb-6">
         <BankForm createAction={createBank} />
       </div>
-      <ul className="divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+      <ul className="divide-y divide-white/10 rounded-2xl stitch-glass shadow-sm overflow-hidden">
         {banks.map((b) => (
           <BankRow key={b.id} bank={b} updateAction={updateBank} deleteAction={deleteBank} />
         ))}

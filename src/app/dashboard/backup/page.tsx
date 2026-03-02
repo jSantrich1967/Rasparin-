@@ -7,7 +7,7 @@ export default function BackupPage() {
       title="Respaldo"
       description="Exporta o importa todos tus datos. Importar reemplaza los datos actuales."
     >
-      <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm">
+      <div className="rounded-2xl stitch-glass p-4 sm:p-6 shadow-sm">
         <BackupPanel />
       </div>
     </PageSection>

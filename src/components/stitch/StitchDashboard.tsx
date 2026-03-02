@@ -239,9 +239,9 @@ export function StitchDashboard() {
             <span className="material-symbols-outlined text-[26px]">insights</span>
             <span className="text-[9px] font-extrabold uppercase tracking-widest">Reportes</span>
           </Link>
-          <Link href="/dashboard" className="flex flex-col items-center gap-1.5 text-slate-500 hover:text-slate-300 transition-colors">
+          <Link href="/dashboard" className="flex flex-col items-center gap-1.5 text-slate-500 hover:text-slate-300 transition-colors" title="Panel clásico (bancos, tarjetas, etc.)">
             <span className="material-symbols-outlined text-[26px]">tune</span>
-            <span className="text-[9px] font-extrabold uppercase tracking-widest">Ajustes</span>
+            <span className="text-[9px] font-extrabold uppercase tracking-widest">Panel</span>
           </Link>
         </div>
       </nav>

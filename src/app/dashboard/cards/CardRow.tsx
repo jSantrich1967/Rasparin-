@@ -74,10 +74,10 @@ export function CardRow({ card, updateAction, deleteAction }: { card: Card; upda
       layout
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 px-4 sm:px-5 py-3 sm:py-4 hover:bg-slate-50/50 transition-colors"
+      className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 px-4 sm:px-5 py-3 sm:py-4 hover:bg-white/5 transition-colors"
     >
       <span className="text-sm">
-        <strong className="text-slate-900">{card.alias}</strong> <span className="text-slate-500">({card.bankName})</span>
+        <strong className="text-white">{card.alias}</strong> <span className="text-slate-500">({card.bankName})</span>
         <span className="text-slate-600 ml-2">Límite: {formatVES(card.creditLimitVES)} — Saldo: {formatVES(card.openingBalanceVES)}</span>
         <span className={`ml-2 text-xs ${card.status === "ACTIVE" ? "text-emerald-600" : "text-slate-500"}`}>{card.status}</span>
       </span>

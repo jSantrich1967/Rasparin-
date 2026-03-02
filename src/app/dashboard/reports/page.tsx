@@ -118,19 +118,19 @@ export default async function ReportsPage({
       >
         <div className="space-y-4">
           {/* Filtros */}
-          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="rounded-2xl stitch-glass p-4">
             <form method="get" className="flex flex-wrap gap-3 items-end">
               <div>
                 <label className="block text-xs font-medium text-slate-500 mb-1">Desde</label>
-                <input type="date" name="from" defaultValue={fromStr ?? ""} className="rounded-lg border border-slate-200 px-3 py-2 text-sm" />
+                <input type="date" name="from" defaultValue={fromStr ?? ""} className="rounded-lg border border-slate-600 bg-slate-800/50 px-3 py-2 text-sm text-white" />
               </div>
               <div>
                 <label className="block text-xs font-medium text-slate-500 mb-1">Hasta</label>
-                <input type="date" name="to" defaultValue={toStr ?? ""} className="rounded-lg border border-slate-200 px-3 py-2 text-sm" />
+                <input type="date" name="to" defaultValue={toStr ?? ""} className="rounded-lg border border-slate-600 bg-slate-800/50 px-3 py-2 text-sm text-white" />
               </div>
               <div>
                 <label className="block text-xs font-medium text-slate-500 mb-1">Tarjeta</label>
-                <select name="card" defaultValue={cardId ?? ""} className="rounded-lg border border-slate-200 px-3 py-2 text-sm min-w-[140px]">
+                <select name="card" defaultValue={cardId ?? ""} className="rounded-lg border border-slate-600 bg-slate-800/50 px-3 py-2 text-sm min-w-[140px] text-white">
                   <option value="">Todas</option>
                   {cards.map((c) => (
                     <option key={c.id} value={c.id}>{c.alias}</option>
@@ -139,14 +139,14 @@ export default async function ReportsPage({
               </div>
               <div>
                 <label className="block text-xs font-medium text-slate-500 mb-1">Estado</label>
-                <select name="status" defaultValue={status ?? ""} className="rounded-lg border border-slate-200 px-3 py-2 text-sm">
+                <select name="status" defaultValue={status ?? ""} className="rounded-lg border border-slate-600 bg-slate-800/50 px-3 py-2 text-sm text-white">
                   <option value="">Todos</option>
                   <option value="OPEN">OPEN</option>
                   <option value="SETTLED">SETTLED</option>
                   <option value="CANCELLED">CANCELLED</option>
                 </select>
               </div>
-              <button type="submit" className="rounded-lg bg-slate-900 text-white px-4 py-2 text-sm font-medium hover:bg-slate-800">
+              <button type="submit" className="rounded-lg bg-gradient-to-tr from-electric-blue to-blue-400 text-white px-4 py-2 text-sm font-medium hover:opacity-90">
                 Filtrar
               </button>
             </form>

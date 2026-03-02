@@ -81,20 +81,20 @@ export default async function OperationsPage({
 
   return (
     <PageSection title="Operaciones" description="Cargas en POS (USD). La deuda en VES se calcula con la tasa BCV al cargo.">
-      <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm mb-6">
+      <div className="rounded-2xl stitch-glass p-4 sm:p-5 mb-6">
         <OperationForm createAction={createOperation} cards={cards} counterparties={counterparties} />
       </div>
       <div className="mb-4 flex flex-wrap gap-2 items-center">
-        <span className="text-sm font-medium text-slate-600">Filtrar:</span>
-        <Link href="/dashboard/operations" className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm hover:bg-slate-50">Todas</Link>
+        <span className="text-sm font-medium text-slate-500">Filtrar:</span>
+        <Link href="/dashboard/operations" className="rounded-lg stitch-glass px-3 py-1.5 text-sm hover:bg-white/5 text-slate-300">Todas</Link>
         {cards.map((c) => (
-          <Link key={c.id} href={`/dashboard/operations?card=${c.id}`} className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm hover:bg-slate-50">{c.alias}</Link>
+          <Link key={c.id} href={`/dashboard/operations?card=${c.id}`} className="rounded-lg stitch-glass px-3 py-1.5 text-sm hover:bg-white/5 text-slate-300">{c.alias}</Link>
         ))}
-        <span className="ml-2 text-sm font-medium text-slate-600">Estado:</span>
-        <Link href={cardId ? `/dashboard/operations?card=${cardId}&status=OPEN` : "/dashboard/operations?status=OPEN"} className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm hover:bg-slate-50">OPEN</Link>
-        <Link href={cardId ? `/dashboard/operations?card=${cardId}&status=SETTLED` : "/dashboard/operations?status=SETTLED"} className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm hover:bg-slate-50">SETTLED</Link>
+        <span className="ml-2 text-sm font-medium text-slate-500">Estado:</span>
+        <Link href={cardId ? `/dashboard/operations?card=${cardId}&status=OPEN` : "/dashboard/operations?status=OPEN"} className="rounded-lg stitch-glass px-3 py-1.5 text-sm hover:bg-white/5 text-slate-300">OPEN</Link>
+        <Link href={cardId ? `/dashboard/operations?card=${cardId}&status=SETTLED` : "/dashboard/operations?status=SETTLED"} className="rounded-lg stitch-glass px-3 py-1.5 text-sm hover:bg-white/5 text-slate-300">SETTLED</Link>
       </div>
-      <ul className="divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+      <ul className="divide-y divide-white/10 rounded-2xl stitch-glass overflow-hidden">
         {operations.map((op) => (
           <OperationRow key={op.id} operation={op} deleteAction={deleteOperation} />
         ))}

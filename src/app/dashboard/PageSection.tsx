@@ -13,12 +13,12 @@ export function PageSection({
   return (
     <section>
       <div className="mb-6">
-        <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">{title}</h2>
-        {description && <p className="text-slate-500 text-sm mt-1">{description}</p>}
+        <h2 className="text-2xl sm:text-3xl font-bold text-white">{title}</h2>
+        {description && <p className="text-slate-400 text-sm mt-1">{description}</p>}
       </div>
       {children}
       <p className="mt-6 text-sm">
-        <Link href="/dashboard" className="text-blue-600 hover:underline">← Volver al Resumen</Link>
+        <Link href="/dashboard" className="text-electric-blue hover:underline">← Volver al Resumen</Link>
       </p>
     </section>
   );

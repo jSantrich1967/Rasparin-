@@ -56,10 +56,10 @@ export default async function CounterpartiesPage() {
   const list = await prisma.counterparty.findMany({ orderBy: [{ type: "asc" }, { name: "asc" }] });
   return (
     <PageSection title="Contrapartes" description="Personas o comercios con los que realizas operaciones.">
-      <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm mb-6">
+      <div className="rounded-2xl stitch-glass p-4 sm:p-5 shadow-sm mb-6">
         <CounterpartyForm createAction={createCounterparty} />
       </div>
-      <ul className="divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+      <ul className="divide-y divide-white/10 rounded-2xl stitch-glass shadow-sm overflow-hidden">
         {list.map((c) => (
           <CounterpartyRow key={c.id} counterparty={c} updateAction={updateCounterparty} deleteAction={deleteCounterparty} />
         ))}

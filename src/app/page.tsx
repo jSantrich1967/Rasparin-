@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <main className="min-h-screen flex flex-col items-center justify-center p-6 stitch-bg">
       <div className="max-w-lg w-full text-center">
         <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4 tracking-tight">
           Tarjeteando
@@ -11,7 +11,7 @@ export default function Home() {
           Control de cash advance indirecto (USD → VES) por tarjeta. Gestiona bancos, operaciones, pagos y conciliaciones en un solo lugar.
         </p>
         <Link
-          href="/dashboard"
+          href="/stitch"
           className="inline-flex items-center justify-center gap-2 rounded-xl bg-white text-slate-900 px-6 py-3 font-semibold text-sm hover:bg-slate-100 transition-all shadow-lg hover:shadow-xl"
         >
           Ir al Panel de Control

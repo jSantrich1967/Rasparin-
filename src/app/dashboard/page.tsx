@@ -61,41 +61,41 @@ export default async function DashboardPage() {
     return (
       <main>
         <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Resumen</h1>
-          <p className="text-slate-500 text-sm mt-1">Tarjeteando — Control de cash advance (USD → VES)</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">Resumen</h1>
+          <p className="text-slate-400 text-sm mt-1">Tarjeteando — Control de cash advance (USD → VES)</p>
         </div>
 
         <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-6">
-          <Link href="/dashboard/reports" className="rounded-xl border-2 border-blue-300 bg-blue-50 p-4 sm:p-5 shadow-sm hover:bg-blue-100 hover:border-blue-400 transition-colors block order-first">
-            <div className="text-sm font-medium text-blue-700">Reportes</div>
-            <div className="text-xl font-bold mt-1 text-blue-900">Operaciones + Fees</div>
-            <p className="text-xs text-blue-600 mt-1">Imprimir, PDF, Excel</p>
+          <Link href="/dashboard/reports" className="rounded-2xl stitch-glass p-4 sm:p-5 hover:bg-white/5 transition-colors block order-first border-electric-blue/30">
+            <div className="text-sm font-medium text-electric-blue">Reportes</div>
+            <div className="text-xl font-bold mt-1 text-white">Operaciones + Fees</div>
+            <p className="text-xs text-slate-400 mt-1">Imprimir, PDF, Excel</p>
           </Link>
-          <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
+          <Link href="/dashboard/banks" className="rounded-2xl stitch-glass p-4 sm:p-5 hover:bg-white/5 transition-colors block">
             <div className="text-sm font-medium text-slate-500">Bancos</div>
-            <div className="text-2xl font-bold text-slate-900 mt-1">{banks}</div>
-            <Link href="/dashboard/banks" className="text-sm text-blue-600 hover:underline mt-2 block">Ver bancos</Link>
-          </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
+            <div className="text-2xl font-bold text-white mt-1">{banks}</div>
+            <p className="text-sm text-electric-blue hover:underline mt-2">Ver bancos</p>
+          </Link>
+          <Link href="/dashboard/cards" className="rounded-2xl stitch-glass p-4 sm:p-5 hover:bg-white/5 transition-colors block">
             <div className="text-sm font-medium text-slate-500">Tarjetas</div>
-            <div className="text-2xl font-bold text-slate-900 mt-1">{cards}</div>
-            <Link href="/dashboard/cards" className="text-sm text-blue-600 hover:underline mt-2 block">Ver tarjetas</Link>
-          </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
+            <div className="text-2xl font-bold text-white mt-1">{cards}</div>
+            <p className="text-sm text-electric-blue hover:underline mt-2">Ver tarjetas</p>
+          </Link>
+          <Link href="/dashboard/operations?status=OPEN" className="rounded-2xl stitch-glass p-4 sm:p-5 hover:bg-white/5 transition-colors block">
             <div className="text-sm font-medium text-slate-500">Operaciones OPEN</div>
-            <div className="text-2xl font-bold text-slate-900 mt-1">{opsOpen}</div>
-            <Link href="/dashboard/operations?status=OPEN" className="text-sm text-blue-600 hover:underline mt-2 block">Ver operaciones</Link>
-          </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
+            <div className="text-2xl font-bold text-white mt-1">{opsOpen}</div>
+            <p className="text-sm text-electric-blue hover:underline mt-2">Ver operaciones</p>
+          </Link>
+          <div className="rounded-2xl stitch-glass p-4 sm:p-5">
             <div className="text-sm font-medium text-slate-500">Ganancia realizada (USD)</div>
-            <div className={`text-2xl font-bold mt-1 ${Number(realizedProfitUSD) >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+            <div className={`text-2xl font-bold mt-1 ${Number(realizedProfitUSD) >= 0 ? "text-emerald-accent" : "text-red-400"}`}>
               {formatUSD(realizedProfitUSD)}
             </div>
             <p className="text-xs text-slate-500 mt-1">Por conciliaciones aplicadas</p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
+          <div className="rounded-2xl stitch-glass p-4 sm:p-5">
             <div className="text-sm font-medium text-slate-500">Ganancia no realizada (USD)</div>
-            <div className={`text-2xl font-bold mt-1 ${Number(unrealizedProfitUSD) >= 0 ? "text-amber-600" : "text-red-600"}`}>
+            <div className={`text-2xl font-bold mt-1 ${Number(unrealizedProfitUSD) >= 0 ? "text-amber-400" : "text-red-400"}`}>
               {formatUSD(unrealizedProfitUSD)}
             </div>
             <p className="text-xs text-slate-500 mt-1">OPEN valoradas con última tasa BCV</p>
@@ -103,16 +103,16 @@ export default async function DashboardPage() {
         </div>
 
         <div className="mt-6 sm:mt-8">
-          <h3 className="text-sm font-medium text-slate-600 mb-3">Accesos rápidos</h3>
+          <h3 className="text-sm font-medium text-slate-500 mb-3">Accesos rápidos</h3>
           <div className="flex flex-wrap gap-2 sm:gap-3">
-            <Link href="/dashboard/reports" className="rounded-lg border-2 border-blue-200 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 hover:bg-blue-100 transition-colors">Reportes</Link>
-            <Link href="/stitch" className="rounded-lg border-2 border-slate-300 bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200 transition-colors">Vista móvil (Stitch)</Link>
-            <Link href="/dashboard/fx-rates" className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">Tasas BCV</Link>
-            <Link href="/dashboard/counterparties" className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">Contrapartes</Link>
-            <Link href="/dashboard/operations" className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">Operaciones</Link>
-            <Link href="/dashboard/payments" className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">Pagos</Link>
-            <Link href="/dashboard/reconciliation" className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">Conciliación</Link>
-            <Link href="/dashboard/backup" className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">Respaldo</Link>
+            <Link href="/dashboard/reports" className="rounded-lg stitch-glass px-4 py-2 text-sm font-medium text-electric-blue hover:bg-white/5 transition-colors">Reportes</Link>
+            <Link href="/stitch" className="rounded-lg stitch-glass px-4 py-2 text-sm font-medium text-slate-300 hover:bg-white/5 transition-colors">Inicio</Link>
+            <Link href="/dashboard/fx-rates" className="rounded-lg stitch-glass px-4 py-2 text-sm font-medium text-slate-300 hover:bg-white/5 transition-colors">Tasas BCV</Link>
+            <Link href="/dashboard/counterparties" className="rounded-lg stitch-glass px-4 py-2 text-sm font-medium text-slate-300 hover:bg-white/5 transition-colors">Contrapartes</Link>
+            <Link href="/dashboard/operations" className="rounded-lg stitch-glass px-4 py-2 text-sm font-medium text-slate-300 hover:bg-white/5 transition-colors">Operaciones</Link>
+            <Link href="/dashboard/payments" className="rounded-lg stitch-glass px-4 py-2 text-sm font-medium text-slate-300 hover:bg-white/5 transition-colors">Pagos</Link>
+            <Link href="/dashboard/reconciliation" className="rounded-lg stitch-glass px-4 py-2 text-sm font-medium text-slate-300 hover:bg-white/5 transition-colors">Conciliación</Link>
+            <Link href="/dashboard/backup" className="rounded-lg stitch-glass px-4 py-2 text-sm font-medium text-slate-300 hover:bg-white/5 transition-colors">Respaldo</Link>
           </div>
         </div>
       </main>
@@ -120,8 +120,8 @@ export default async function DashboardPage() {
   } catch {
     return (
       <main>
-        <h1 className="text-2xl font-bold text-slate-900">Resumen</h1>
-        <p className="text-red-600 mt-2 text-sm">
+        <h1 className="text-2xl font-bold text-white">Resumen</h1>
+        <p className="text-red-400 mt-2 text-sm">
           No se pudo conectar a la base de datos. Verifica <code className="font-mono">DATABASE_URL</code> en tu entorno.
         </p>
       </main>
