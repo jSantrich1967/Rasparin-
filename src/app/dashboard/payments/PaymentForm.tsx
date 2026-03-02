@@ -58,6 +58,11 @@ export function PaymentForm({ createAction, cards }: { createAction: CreateActio
         <input type="number" name="bcvRateOnPayment" step="0.000001" min="0" required placeholder="36.5" className="rounded-lg border border-slate-200 px-3 py-2 text-sm w-24 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
       </label>
       <label className="flex flex-col gap-1.5">
+        <span className="text-sm font-medium text-slate-600">Tasa de mercado</span>
+        <input type="number" name="marketRate" step="0.000001" min="0" placeholder="38.50" className="rounded-lg border border-slate-200 px-3 py-2 text-sm w-24 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+        <span className="text-[10px] text-slate-500">Opcional. Para USD real.</span>
+      </label>
+      <label className="flex flex-col gap-1.5">
         <span className="text-sm font-medium text-slate-600">Notas</span>
         <input type="text" name="notes" className="rounded-lg border border-slate-200 px-3 py-2 text-sm w-32 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
       </label>

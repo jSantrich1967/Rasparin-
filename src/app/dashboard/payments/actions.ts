@@ -9,6 +9,7 @@ export async function createPayment(formData: FormData): Promise<{ ok: true } | 
   const cardId = formData.get("cardId") as string;
   const amountVES = formData.get("amountVES") as string;
   const bcvRateOnPayment = formData.get("bcvRateOnPayment") as string;
+  const marketRateStr = (formData.get("marketRate") as string)?.trim() || null;
   const notes = (formData.get("notes") as string)?.trim() || null;
   if (!dateStr || !cardId || !amountVES || !bcvRateOnPayment) {
     return { ok: false, message: "Fecha, tarjeta, monto VES y tasa BCV son obligatorios" };
@@ -18,6 +19,11 @@ export async function createPayment(formData: FormData): Promise<{ ok: true } | 
   if (Number.isNaN(amount) || amount <= 0 || Number.isNaN(bcv) || bcv <= 0) {
     return { ok: false, message: "Monto y tasa deben ser positivos" };
   }
+  const marketRateNum = marketRateStr ? parseFloat(marketRateStr) : NaN;
+  const marketRate = Number.isFinite(marketRateNum) && marketRateNum > 0 ? marketRateNum : null;
+  if (marketRateStr && marketRate == null) {
+    return { ok: false, message: "La tasa de mercado debe ser un número positivo" };
+  }
   try {
     await prisma.payment.create({
       data: {
@@ -25,6 +31,7 @@ export async function createPayment(formData: FormData): Promise<{ ok: true } | 
         cardId,
         amountVES: amount,
         bcvRateOnPayment: bcv,
+        marketRate: marketRate ?? undefined,
         notes,
       },
     });
