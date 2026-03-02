@@ -33,13 +33,13 @@ export async function GET() {
       version: 1,
       exportedAt: new Date().toISOString(),
       data: {
-        banks: banks.map((r) => serializeRecord(r as unknown as Record<string, unknown>)),
-        cards: cards.map((r) => serializeRecord(r as unknown as Record<string, unknown>)),
-        counterparties: counterparties.map((r) => serializeRecord(r as unknown as Record<string, unknown>)),
-        fxRates: fxRates.map((r) => serializeRecord(r as unknown as Record<string, unknown>)),
-        operations: operations.map((r) => serializeRecord(r as unknown as Record<string, unknown>)),
-        payments: payments.map((r) => serializeRecord(r as unknown as Record<string, unknown>)),
-        allocations: allocations.map((r) => serializeRecord(r as unknown as Record<string, unknown>)),
+        banks: banks.map((r: Record<string, unknown>) => serializeRecord(r)),
+        cards: cards.map((r: Record<string, unknown>) => serializeRecord(r)),
+        counterparties: counterparties.map((r: Record<string, unknown>) => serializeRecord(r)),
+        fxRates: fxRates.map((r: Record<string, unknown>) => serializeRecord(r)),
+        operations: operations.map((r: Record<string, unknown>) => serializeRecord(r)),
+        payments: payments.map((r: Record<string, unknown>) => serializeRecord(r)),
+        allocations: allocations.map((r: Record<string, unknown>) => serializeRecord(r)),
       },
     };
 
