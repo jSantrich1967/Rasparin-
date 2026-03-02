@@ -10,7 +10,7 @@ const navItems = [
   { href: "/dashboard/reports", label: "Reportes" },
   { href: "/dashboard/banks", label: "Bancos" },
   { href: "/dashboard/cards", label: "Tarjetas" },
-  { href: "/dashboard/fx-rates", label: "Tasas BCV" },
+  { href: "/dashboard/fx-rates", label: "Tasas BCV y Mercado" },
   { href: "/dashboard/counterparties", label: "Contrapartes" },
   { href: "/dashboard/operations", label: "Operaciones" },
   { href: "/dashboard/payments", label: "Pagos" },

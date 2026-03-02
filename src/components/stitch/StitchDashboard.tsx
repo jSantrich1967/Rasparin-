@@ -103,10 +103,14 @@ export function StitchDashboard({
                     <span className="material-symbols-outlined text-xs">account_balance</span> BCV {bcvRate.toFixed(2)}
                   </div>
                 )}
-                {marketRate > 0 && (
+                {marketRate > 0 ? (
                   <div className="bg-emerald-500/10 px-2 py-1 rounded-lg text-[10px] font-bold flex items-center gap-1 border border-emerald-500/20 text-emerald-accent">
                     <span className="material-symbols-outlined text-xs">trending_up</span> Mercado {marketRate.toFixed(2)}
                   </div>
+                ) : (
+                  <Link href="/dashboard/fx-rates" className="bg-amber-500/10 px-2 py-1 rounded-lg text-[10px] font-bold flex items-center gap-1 border border-amber-500/20 text-amber-400 hover:bg-amber-500/20 transition-colors">
+                    <span className="material-symbols-outlined text-xs">add_chart</span> Configurar tasa mercado
+                  </Link>
                 )}
               </div>
             </div>

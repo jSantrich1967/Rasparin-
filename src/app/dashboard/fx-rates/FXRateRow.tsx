@@ -41,7 +41,9 @@ export function FXRateRow({ rate, deleteAction }: { rate: FXRate; deleteAction: 
       </span>
       <div className="flex gap-3 items-center flex-wrap">
         <span className="font-medium text-white">{formatVES(rate.bcvRate.toString())} BCV</span>
-        {rate.marketRate && <span className="font-medium text-emerald-600">{formatVES(rate.marketRate.toString())} Mercado</span>}
+        <span className={rate.marketRate ? "font-medium text-emerald-accent" : "text-slate-500 text-sm"}>
+          {rate.marketRate ? `${formatVES(rate.marketRate.toString())} Mercado` : "— Mercado"}
+        </span>
         <button type="button" onClick={handleDelete} disabled={isPending} className="btn-danger">Eliminar</button>
       </div>
     </li>
