@@ -30,14 +30,23 @@ export default async function StitchPage() {
     ]);
 
     // Deuda total pendiente (OPEN): suma de usdCharged y debtVES
+    // USD netos recibidos (post-fees): usdCharged - bankFee - merchantFee
     let totalDebtUSD = d(0);
     let totalDebtVES = d(0);
+    let totalNetUsdReceived = d(0);
     for (const op of openOperations) {
       totalDebtUSD = totalDebtUSD.add(op.usdCharged);
       totalDebtVES = totalDebtVES.add(calcDebtVES({ usdCharged: op.usdCharged.toString(), bcvRateOnCharge: op.bcvRateOnCharge.toString() }));
+      const fees = calcFees({
+        usdCharged: op.usdCharged.toString(),
+        bankFeePercent: op.bankFeePercent.toString(),
+        merchantFeePercent: op.merchantFeePercent.toString(),
+      });
+      totalNetUsdReceived = totalNetUsdReceived.add(fees.usdCashReceived);
     }
     totalDebtUSD = round2(totalDebtUSD);
     totalDebtVES = round2(totalDebtVES);
+    totalNetUsdReceived = round2(totalNetUsdReceived);
 
     // Ganancia realizada
     let realizedProfitUSD = d(0);
@@ -92,6 +101,7 @@ export default async function StitchPage() {
       <StitchDashboard
         totalDebtUSD={Number(totalDebtUSD)}
         totalDebtVES={Number(totalDebtVES)}
+        totalNetUsdReceived={Number(totalNetUsdReceived)}
         bcvRate={bcvRate}
         realizedProfitUSD={Number(realizedProfitUSD)}
         pendingDebtUSD={Number(totalDebtUSD)}

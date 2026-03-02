@@ -6,6 +6,7 @@ import { formatUSD, formatVES } from "@/lib/money";
 export type StitchDashboardProps = {
   totalDebtUSD: number;
   totalDebtVES: number;
+  totalNetUsdReceived: number;
   bcvRate: number;
   realizedProfitUSD: number;
   pendingDebtUSD: number;
@@ -20,6 +21,7 @@ export type StitchDashboardProps = {
 export function StitchDashboard({
   totalDebtUSD,
   totalDebtVES,
+  totalNetUsdReceived,
   bcvRate,
   realizedProfitUSD,
   pendingDebtUSD,
@@ -92,6 +94,7 @@ export function StitchDashboard({
                   <h2 className="text-4xl font-extrabold tracking-tight">{formatUSD(totalDebtUSD)}</h2>
                 </div>
                 <p className="text-slate-500 text-xs mt-1 font-medium tracking-tight">≈ {formatVES(totalDebtVES)} VES <span className="text-[10px] opacity-40 italic ml-1">({bcvRate > 0 ? bcvRate.toFixed(2) : "—"} BCV)</span></p>
+                <p className="text-emerald-accent/90 text-xs mt-2 font-semibold">USD netos recibidos (post-fees): {formatUSD(totalNetUsdReceived)}</p>
               </div>
               {bcvRate > 0 && (
                 <div className="bg-white/5 px-2 py-1 rounded-lg text-[10px] font-bold flex items-center gap-1 border border-white/10">
