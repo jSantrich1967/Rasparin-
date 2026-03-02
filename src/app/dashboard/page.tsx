@@ -66,6 +66,11 @@ export default async function DashboardPage() {
         </div>
 
         <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-6">
+          <Link href="/dashboard/reports" className="rounded-xl border-2 border-blue-300 bg-blue-50 p-4 sm:p-5 shadow-sm hover:bg-blue-100 hover:border-blue-400 transition-colors block order-first">
+            <div className="text-sm font-medium text-blue-700">Reportes</div>
+            <div className="text-xl font-bold mt-1 text-blue-900">Operaciones + Fees</div>
+            <p className="text-xs text-blue-600 mt-1">Imprimir, PDF, Excel</p>
+          </Link>
           <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
             <div className="text-sm font-medium text-slate-500">Bancos</div>
             <div className="text-2xl font-bold text-slate-900 mt-1">{banks}</div>
@@ -95,22 +100,17 @@ export default async function DashboardPage() {
             </div>
             <p className="text-xs text-slate-500 mt-1">OPEN valoradas con última tasa BCV</p>
           </div>
-          <Link href="/dashboard/reports" className="rounded-xl border-2 border-blue-200 bg-blue-50 p-4 sm:p-5 shadow-sm hover:bg-blue-100 hover:border-blue-300 transition-colors block">
-            <div className="text-sm font-medium text-blue-700">Reportes</div>
-            <div className="text-xl font-bold mt-1 text-blue-900">Operaciones + Fees</div>
-            <p className="text-xs text-blue-600 mt-1">Imprimir, PDF, Excel</p>
-          </Link>
         </div>
 
         <div className="mt-6 sm:mt-8">
           <h3 className="text-sm font-medium text-slate-600 mb-3">Accesos rápidos</h3>
           <div className="flex flex-wrap gap-2 sm:gap-3">
+            <Link href="/dashboard/reports" className="rounded-lg border-2 border-blue-200 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 hover:bg-blue-100 transition-colors">Reportes</Link>
             <Link href="/dashboard/fx-rates" className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">Tasas BCV</Link>
             <Link href="/dashboard/counterparties" className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">Contrapartes</Link>
             <Link href="/dashboard/operations" className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">Operaciones</Link>
             <Link href="/dashboard/payments" className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">Pagos</Link>
             <Link href="/dashboard/reconciliation" className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">Conciliación</Link>
-            <Link href="/dashboard/reports" className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 hover:bg-blue-100 transition-colors">Reportes</Link>
             <Link href="/dashboard/backup" className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">Respaldo</Link>
           </div>
         </div>

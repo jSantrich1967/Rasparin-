@@ -6,6 +6,7 @@ import { useState } from "react";
 
 const navItems = [
   { href: "/dashboard", label: "Resumen" },
+  { href: "/dashboard/reports", label: "Reportes" },
   { href: "/dashboard/banks", label: "Bancos" },
   { href: "/dashboard/cards", label: "Tarjetas" },
   { href: "/dashboard/fx-rates", label: "Tasas BCV" },
@@ -13,7 +14,6 @@ const navItems = [
   { href: "/dashboard/operations", label: "Operaciones" },
   { href: "/dashboard/payments", label: "Pagos" },
   { href: "/dashboard/reconciliation", label: "Conciliación" },
-  { href: "/dashboard/reports", label: "Reportes" },
   { href: "/dashboard/backup", label: "Respaldo" },
 ];
 
