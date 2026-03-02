@@ -8,6 +8,7 @@ const navItems = [
   { href: "/stitch", label: "Inicio" },
   { href: "/dashboard", label: "Resumen" },
   { href: "/dashboard/reports", label: "Reportes" },
+  { href: "/dashboard/reports/gains", label: "Ganancias" },
   { href: "/dashboard/banks", label: "Bancos" },
   { href: "/dashboard/cards", label: "Tarjetas" },
   { href: "/dashboard/fx-rates", label: "Tasas BCV y Mercado" },

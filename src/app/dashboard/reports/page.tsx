@@ -117,6 +117,22 @@ export default async function ReportsPage({
         description="Resumen de operaciones con fees. Imprime, exporta a PDF o Excel."
       >
         <div className="space-y-4">
+          {/* Acceso a reporte de ganancias */}
+          <div className="rounded-2xl stitch-glass p-4 border border-electric-blue/20">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h3 className="font-semibold text-white">Reporte de Ganancias</h3>
+                <p className="text-sm text-slate-400 mt-0.5">Cálculo detallado de ganancia realizada y no realizada, con desglose por asignación.</p>
+              </div>
+              <a
+                href="/dashboard/reports/gains"
+                className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-tr from-electric-blue to-blue-400 text-white px-4 py-2 text-sm font-medium hover:opacity-90"
+              >
+                Ver reporte de ganancias →
+              </a>
+            </div>
+          </div>
+
           {/* Filtros */}
           <div className="rounded-2xl stitch-glass p-4">
             <form method="get" className="flex flex-wrap gap-3 items-end">

@@ -74,8 +74,13 @@ export default async function DashboardPage() {
         </div>
 
         <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-6">
-          <Link href="/dashboard/reports" className="rounded-2xl stitch-glass p-4 sm:p-5 hover:bg-white/5 transition-colors block order-first border-electric-blue/30">
-            <div className="text-sm font-medium text-electric-blue">Reportes</div>
+          <Link href="/dashboard/reports/gains" className="rounded-2xl stitch-glass p-4 sm:p-5 hover:bg-white/5 transition-colors block order-first border-electric-blue/30">
+            <div className="text-sm font-medium text-electric-blue">Ganancias</div>
+            <div className="text-xl font-bold mt-1 text-white">Reporte + Cálculo</div>
+            <p className="text-xs text-slate-400 mt-1">Desglose realizado / no realizado</p>
+          </Link>
+          <Link href="/dashboard/reports" className="rounded-2xl stitch-glass p-4 sm:p-5 hover:bg-white/5 transition-colors block">
+            <div className="text-sm font-medium text-slate-500">Reportes</div>
             <div className="text-xl font-bold mt-1 text-white">Operaciones + Fees</div>
             <p className="text-xs text-slate-400 mt-1">Imprimir, PDF, Excel</p>
           </Link>

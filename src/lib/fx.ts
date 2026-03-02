@@ -60,6 +60,10 @@ export function buildRateLookup(
     const r = withMoment.find((x) => x.moment! <= targetMoment);
     if (!r) return null;
     const market = r.marketRate?.toString();
-    return { marketRate: market ?? r.bcvRate.toString(), bcvRate: r.bcvRate.toString() };
+    return {
+      marketRate: market ?? r.bcvRate.toString(),
+      bcvRate: r.bcvRate.toString(),
+      usedMarketRate: !!market,
+    };
   };
 }
