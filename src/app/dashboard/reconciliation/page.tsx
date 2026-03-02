@@ -1,36 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { ReconciliationPanel } from "./ReconciliationPanel";
 import { PageSection } from "../PageSection";
-import { applyAllocations } from "@/lib/reconciliation";
-import { revalidatePath } from "next/cache";
-
-async function submitAllocations(formData: FormData): Promise<{ ok: true } | { ok: false; message: string }> {
-  "use server";
-  const paymentId = formData.get("paymentId") as string;
-  if (!paymentId) return { ok: false, message: "Falta paymentId" };
-  const marketRateStr = formData.get("marketRate") as string;
-  const marketRate = marketRateStr ? parseFloat(marketRateStr) : NaN;
-  if (!Number.isFinite(marketRate) || marketRate <= 0) {
-    return { ok: false, message: "Ingresa la tasa de mercado (paralela) para calcular la ganancia" };
-  }
-  const items: { operationId: string; amountVESApplied: string }[] = [];
-  for (const [key, value] of formData.entries()) {
-    if (key.startsWith("op_") && value && typeof value === "string") {
-      const operationId = key.slice(3);
-      const amount = parseFloat(value);
-      if (!Number.isNaN(amount) && amount > 0) items.push({ operationId, amountVESApplied: value });
-    }
-  }
-  const result = await applyAllocations({ paymentId, items, marketRate });
-  if (result.ok) {
-    revalidatePath("/dashboard/reconciliation");
-    revalidatePath(`/dashboard/reconciliation?payment=${paymentId}`);
-    revalidatePath("/dashboard/payments");
-    revalidatePath("/dashboard");
-    revalidatePath("/stitch");
-  }
-  return result;
-}
+import { submitAllocations } from "../payments/actions";
 
 export default async function ReconciliationPage({
   searchParams,

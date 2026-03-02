@@ -1,85 +1,8 @@
 import { prisma } from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
 import { PageSection } from "../PageSection";
 import { PaymentForm } from "./PaymentForm";
 import { PaymentRow } from "./PaymentRow";
-import { applyAllocations } from "@/lib/reconciliation";
-async function createPayment(formData: FormData): Promise<{ ok: true } | { ok: false; message: string }> {
-  "use server";
-  const dateStr = formData.get("date") as string;
-  const cardId = formData.get("cardId") as string;
-  const amountVES = formData.get("amountVES") as string;
-  const bcvRateOnPayment = formData.get("bcvRateOnPayment") as string;
-  const notes = (formData.get("notes") as string)?.trim() || null;
-  if (!dateStr || !cardId || !amountVES || !bcvRateOnPayment) {
-    return { ok: false, message: "Fecha, tarjeta, monto VES y tasa BCV son obligatorios" };
-  }
-  const amount = parseFloat(amountVES);
-  const bcv = parseFloat(bcvRateOnPayment);
-  if (Number.isNaN(amount) || amount <= 0 || Number.isNaN(bcv) || bcv <= 0) {
-    return { ok: false, message: "Monto y tasa deben ser positivos" };
-  }
-  try {
-    await prisma.payment.create({
-      data: {
-        date: new Date(dateStr),
-        cardId,
-        amountVES: amount,
-        bcvRateOnPayment: bcv,
-        notes,
-      },
-    });
-    revalidatePath("/dashboard/payments");
-    revalidatePath("/dashboard/reconciliation");
-    revalidatePath("/dashboard");
-    revalidatePath("/stitch");
-    return { ok: true };
-  } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e);
-    return { ok: false, message: msg || "Error al guardar. Verifica la conexión a la base de datos." };
-  }
-}
-
-async function deletePayment(id: string): Promise<{ ok: true } | { ok: false; message: string }> {
-  "use server";
-  if (!id) return { ok: false, message: "ID requerido" };
-  try {
-    await prisma.payment.delete({ where: { id } });
-    revalidatePath("/dashboard/payments");
-    revalidatePath("/dashboard/reconciliation");
-    revalidatePath("/dashboard");
-    return { ok: true };
-  } catch (e) {
-    return { ok: false, message: e instanceof Error ? e.message : "Error al eliminar" };
-  }
-}
-
-async function submitAllocations(formData: FormData): Promise<{ ok: true } | { ok: false; message: string }> {
-  "use server";
-  const paymentId = formData.get("paymentId") as string;
-  if (!paymentId) return { ok: false, message: "Falta paymentId" };
-  const marketRateStr = formData.get("marketRate") as string;
-  const marketRate = marketRateStr ? parseFloat(marketRateStr) : NaN;
-  if (!Number.isFinite(marketRate) || marketRate <= 0) {
-    return { ok: false, message: "Ingresa la tasa de mercado (paralela) para calcular la ganancia" };
-  }
-  const items: { operationId: string; amountVESApplied: string }[] = [];
-  for (const [key, value] of formData.entries()) {
-    if (key.startsWith("op_") && value && typeof value === "string") {
-      const operationId = key.slice(3);
-      const amount = parseFloat(value);
-      if (!Number.isNaN(amount) && amount > 0) items.push({ operationId, amountVESApplied: value });
-    }
-  }
-  const result = await applyAllocations({ paymentId, items, marketRate });
-  if (result.ok) {
-    revalidatePath("/dashboard/payments");
-    revalidatePath("/dashboard/reconciliation");
-    revalidatePath("/dashboard");
-    revalidatePath("/stitch");
-  }
-  return result;
-}
+import { createPayment, deletePayment, submitAllocations } from "./actions";
 
 export default async function PaymentsPage({
   searchParams,
