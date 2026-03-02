@@ -162,7 +162,12 @@ export function ReconciliationPanel({
           <p className="font-semibold text-white text-base">
             Pago: {new Date(paymentDetail.date).toISOString().slice(0, 10)} — {paymentDetail.card.alias} — {formatVES(paymentDetail.amountVES.toString())} VES
           </p>
-          <p className="text-sm text-slate-300 mt-1">Haz clic en el monto sugerido o escribe uno distinto si hay diferencia.</p>
+          <p className="text-sm text-slate-300 mt-1">
+            Todos los montos son en <strong>bolívares (VES)</strong>. Haz clic en el monto sugerido o escribe uno distinto.
+          </p>
+          <p className="text-xs text-amber-400/90 mt-0.5">
+            Si el pago o la deuda están en USD, convierte primero: USD × tasa BCV = VES.
+          </p>
 
           <form key={paymentDetail.id} onSubmit={handleSubmit} className="mt-4 space-y-3">
             <input type="hidden" name="paymentId" value={paymentDetail.id} />
@@ -172,8 +177,8 @@ export function ReconciliationPanel({
                   <tr className="border-b border-white/10">
                     <th className="text-left py-3 px-2 font-medium text-slate-300">Fecha</th>
                     <th className="text-left py-3 px-2 font-medium text-slate-300">Contraparte</th>
-                    <th className="text-right py-3 px-2 font-medium text-slate-300">Deuda VES</th>
-                    <th className="text-right py-3 px-2 font-medium text-slate-300 hidden sm:table-cell">Ya asignado</th>
+                    <th className="text-right py-3 px-2 font-medium text-slate-300">Deuda (VES)</th>
+                    <th className="text-right py-3 px-2 font-medium text-slate-300 hidden sm:table-cell">Ya asignado (VES)</th>
                     <th className="text-right py-3 px-2 font-medium text-slate-300">VES a asignar</th>
                   </tr>
                 </thead>
@@ -201,18 +206,22 @@ export function ReconciliationPanel({
                                 {formatVES(remaining)}
                               </button>
                             )}
-                            <input
-                              ref={(el) => { inputRefs.current[op.id] = el; }}
-                              type="number"
-                              name={`op_${op.id}`}
-                              step="0.01"
-                              min="0"
-                              inputMode="decimal"
-                              defaultValue={currentForThisPayment || ""}
-                              placeholder="0"
-                              onChange={updateTotal}
-                              className="w-24 sm:w-28 rounded-lg border border-white/20 bg-slate-900/50 px-2 py-1.5 text-right text-sm text-white placeholder-slate-500 focus:border-electric-blue focus:outline-none focus:ring-2 focus:ring-electric-blue/30"
-                            />
+                            <span className="flex items-center gap-1">
+                              <input
+                                ref={(el) => { inputRefs.current[op.id] = el; }}
+                                type="number"
+                                name={`op_${op.id}`}
+                                step="0.01"
+                                min="0"
+                                inputMode="decimal"
+                                defaultValue={currentForThisPayment || ""}
+                                placeholder="0"
+                                onChange={updateTotal}
+                                className="w-28 sm:w-36 rounded-lg border border-white/20 bg-slate-900/50 px-2 py-1.5 text-right text-sm text-white placeholder-slate-500 focus:border-electric-blue focus:outline-none focus:ring-2 focus:ring-electric-blue/30"
+                                title="Monto en bolívares (VES)"
+                              />
+                              <span className="text-[10px] text-slate-500 font-medium">VES</span>
+                            </span>
                           </div>
                         </td>
                       </tr>
@@ -229,9 +238,9 @@ export function ReconciliationPanel({
             ) : (
               <>
                 <div className={`flex items-center gap-2 text-sm font-medium ${totalAssigned > paymentTotal ? "text-red-400" : "text-slate-300"}`}>
-                  <span>Total asignado:</span>
+                  <span>Total asignado (VES):</span>
                   <span>{formatVES(totalAssigned)}</span>
-                  <span>/ {formatVES(paymentDetail.amountVES.toString())}</span>
+                  <span>/ {formatVES(paymentDetail.amountVES.toString())} VES</span>
                   {totalAssigned > paymentTotal && <span className="text-xs">(reduce el total)</span>}
                 </div>
                 <div className="flex flex-wrap items-center gap-3">

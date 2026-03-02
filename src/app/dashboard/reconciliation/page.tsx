@@ -70,7 +70,7 @@ export default async function ReconciliationPage({
   return (
     <PageSection
       title="Conciliación"
-      description="Elige un pago y asigna montos en VES a operaciones de la misma tarjeta. No puedes superar el monto del pago ni la deuda pendiente."
+      description="Elige un pago y asigna montos en VES a operaciones. También puedes conciliar desde la página de Pagos (clic en Conciliar en cada pago)."
     >
       <div className="rounded-2xl stitch-glass p-4 sm:p-6 shadow-sm">
         <ReconciliationPanel

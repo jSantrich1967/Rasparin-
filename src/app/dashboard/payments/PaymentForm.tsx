@@ -50,7 +50,8 @@ export function PaymentForm({ createAction, cards }: { createAction: CreateActio
       </label>
       <label className="flex flex-col gap-1.5">
         <span className="text-sm font-medium text-slate-600">Monto VES</span>
-        <input type="number" name="amountVES" step="0.01" min="0" required placeholder="1000" className="rounded-lg border border-slate-200 px-3 py-2 text-sm w-28 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+        <input type="number" name="amountVES" step="0.01" min="0" required placeholder="3600" title="Monto en bolívares (no USD)" className="rounded-lg border border-slate-200 px-3 py-2 text-sm w-28 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+        <span className="text-[10px] text-slate-500">En bolívares. Si pagaste en USD, multiplica: USD × tasa.</span>
       </label>
       <label className="flex flex-col gap-1.5">
         <span className="text-sm font-medium text-slate-600">Tasa BCV al pago</span>

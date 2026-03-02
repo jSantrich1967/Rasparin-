@@ -74,8 +74,9 @@ export function OperationForm({
         <input type="number" name="merchantFeePercent" step="0.001" min="0" max="1" defaultValue="0.01" className="rounded-lg border border-slate-200 px-3 py-2 text-sm w-20 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
       </label>
       <label className="flex flex-col gap-1.5">
-        <span className="text-sm font-medium text-slate-600">Tasa BCV</span>
-        <input type="number" name="bcvRateOnCharge" step="0.000001" min="0" required placeholder="36.5" className="rounded-lg border border-slate-200 px-3 py-2 text-sm w-24 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+        <span className="text-sm font-medium text-slate-600">Tasa BCV (VES/USD)</span>
+        <input type="number" name="bcvRateOnCharge" step="0.000001" min="0" required placeholder="36.5" title="Tasa para convertir USD a VES. Ej: 36.5" className="rounded-lg border border-slate-200 px-3 py-2 text-sm w-24 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+        <span className="text-[10px] text-slate-500">Usada para calcular la deuda en VES</span>
       </label>
       <label className="flex flex-col gap-1.5">
         <span className="text-sm font-medium text-slate-600">Notas</span>
