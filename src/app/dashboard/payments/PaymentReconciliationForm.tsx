@@ -118,6 +118,10 @@ export function PaymentReconciliationForm({
 
   return (
     <div className="mt-3 pt-3 border-t border-white/10">
+      <div className="flex items-center gap-3 mb-3">
+        <span className="text-sm font-semibold text-white">Bolívares del pago:</span>
+        <span className="text-lg font-bold text-electric-blue">{formatVES(paymentDetail.amountVES.toString())} VES</span>
+      </div>
       <p className="text-sm text-slate-300 mb-2">
         Asigna montos en <strong>VES</strong> a operaciones de {paymentDetail.card.alias}. Clic en el monto azul o escribe.
       </p>

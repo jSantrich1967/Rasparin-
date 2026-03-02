@@ -159,9 +159,15 @@ export function ReconciliationPanel({
 
       {paymentDetail && (
         <div className="p-4 sm:p-5 bg-slate-800/40 rounded-xl border border-white/10">
-          <p className="font-semibold text-white text-base">
-            Pago: {new Date(paymentDetail.date).toISOString().slice(0, 10)} — {paymentDetail.card.alias} — {formatVES(paymentDetail.amountVES.toString())} VES
-          </p>
+          <div className="flex flex-wrap items-center gap-4 mb-2">
+            <p className="font-semibold text-white text-base">
+              Pago: {new Date(paymentDetail.date).toISOString().slice(0, 10)} — {paymentDetail.card.alias}
+            </p>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-electric-blue/20 border border-electric-blue/30">
+              <span className="text-sm font-medium text-slate-300">Bolívares del pago:</span>
+              <span className="text-lg font-bold text-electric-blue">{formatVES(paymentDetail.amountVES.toString())} VES</span>
+            </div>
+          </div>
           <p className="text-sm text-slate-300 mt-1">
             Todos los montos son en <strong>bolívares (VES)</strong>. Haz clic en el monto sugerido o escribe uno distinto.
           </p>
