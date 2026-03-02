@@ -9,8 +9,9 @@ export type AllocationInput = { operationId: string; amountVESApplied: string | 
 export async function applyAllocations(params: {
   paymentId: string;
   items: AllocationInput[];
+  marketRate: number;
 }): Promise<{ ok: true } | { ok: false; message: string }> {
-  const { paymentId } = params;
+  const { paymentId, marketRate } = params;
 
   const payment = await prisma.payment.findUnique({
     where: { id: paymentId },
@@ -89,6 +90,11 @@ export async function applyAllocations(params: {
   }
 
   await prisma.$transaction(async (tx) => {
+    // Actualizar tasa de mercado del pago (para cálculo de ganancia)
+    await tx.payment.update({
+      where: { id: paymentId },
+      data: { marketRate: marketRate.toFixed(6) },
+    });
     // Upsert allocations for provided ops; if amount is 0, delete if exists
     for (const [operationId, amountVESApplied] of itemsByOp.entries()) {
       const amt = round2(amountVESApplied);

@@ -57,11 +57,15 @@ export default async function GainsReportPage() {
       });
       const shareUsdCashReceived = fees.usdCashReceived.mul(share);
 
-      const paymentDayEnd = new Date(payment.date);
-      paymentDayEnd.setUTCHours(23, 59, 59, 999);
-      const rateInfo = getRate(paymentDayEnd);
-      const marketOrBcv = rateInfo?.marketRate ?? rateInfo?.bcvRate ?? payment.bcvRateOnPayment.toString();
-      const usedMarket = rateInfo?.usedMarketRate ?? false;
+      // Usar tasa de mercado del pago (ingresada al conciliar); si no hay, fallback a FX/BCV
+      const paymentMarketRate = payment.marketRate?.toString();
+      const marketOrBcv = paymentMarketRate ?? (() => {
+        const paymentDayEnd = new Date(payment.date);
+        paymentDayEnd.setUTCHours(23, 59, 59, 999);
+        const rateInfo = getRate(paymentDayEnd);
+        return rateInfo?.marketRate ?? rateInfo?.bcvRate ?? payment.bcvRateOnPayment.toString();
+      })();
+      const usedMarket = !!paymentMarketRate;
 
       const profit = calcProfitRealizedUSDWithMarket({
         usdCashReceived: shareUsdCashReceived,

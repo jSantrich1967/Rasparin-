@@ -132,6 +132,8 @@ model Payment {
 
   amountVES        Decimal    @db.Decimal(18, 2)
   bcvRateOnPayment Decimal    @db.Decimal(18, 6)
+  /// Tasa de mercado (paralela) al momento del pago; usada para calcular ganancia realizada
+  marketRate       Decimal?   @db.Decimal(18, 6)
 
   notes            String?
 

@@ -34,6 +34,7 @@ type PaymentDetail = {
   date: Date;
   amountVES: { toString(): string };
   bcvRateOnPayment: { toString(): string };
+  marketRate: { toString(): string } | null;
   card: { alias: string; bank: { name: string } | null };
   allocations: Allocation[];
 };
@@ -110,6 +111,12 @@ export function ReconciliationPanel({
     });
     if (!hasAnyAmount) {
       toast.error("Ingresa al menos un monto en VES a asignar");
+      return;
+    }
+    const marketRateVal = formData.get("marketRate") as string;
+    const marketRateNum = marketRateVal ? parseFloat(marketRateVal) : NaN;
+    if (!Number.isFinite(marketRateNum) || marketRateNum <= 0) {
+      toast.error("Ingresa la tasa de mercado (paralela) para calcular la ganancia");
       return;
     }
     startTransition(async () => {
@@ -226,6 +233,24 @@ export function ReconciliationPanel({
                   <span>{formatVES(totalAssigned)}</span>
                   <span>/ {formatVES(paymentDetail.amountVES.toString())}</span>
                   {totalAssigned > paymentTotal && <span className="text-xs">(reduce el total)</span>}
+                </div>
+                <div className="flex flex-wrap items-center gap-3">
+                  <label className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-slate-300">Tasa de mercado (VES/USD):</span>
+                    <input
+                      type="number"
+                      name="marketRate"
+                      step="0.000001"
+                      min="0.000001"
+                      inputMode="decimal"
+                      defaultValue={paymentDetail.marketRate ? paymentDetail.marketRate.toString() : ""}
+                      placeholder="38.50"
+                      required
+                      className="w-24 rounded-lg border border-white/20 bg-slate-900/50 px-2 py-1.5 text-right text-sm text-white placeholder-slate-500 focus:border-electric-blue focus:outline-none focus:ring-2 focus:ring-electric-blue/30"
+                      title="Tasa paralela al momento del pago. Se usa para calcular la ganancia: USD recibido − (VES asignados ÷ tasa)"
+                    />
+                  </label>
+                  <span className="text-xs text-slate-500">Obligatoria para calcular ganancia</span>
                 </div>
                 <p className="text-slate-400 text-xs">Clic en el monto azul para llenar (se limita al pago disponible). O escribe uno distinto.</p>
               </>
