@@ -20,7 +20,7 @@ export default function LoginForm({ from }: { from: string }) {
         <p className="text-slate-400 text-sm mt-1">Inicia sesión para continuar</p>
 
         <form
-          className="mt-6 space-y-4 touch-manipulation"
+          className="login-form mt-6 space-y-4 touch-manipulation"
           onSubmit={async (e) => {
             e.preventDefault();
             setLoading(true);
@@ -40,7 +40,7 @@ export default function LoginForm({ from }: { from: string }) {
             <input
               type="text"
               className="w-full rounded-lg border border-slate-600 bg-slate-900 px-3 py-3 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 min-h-[44px] touch-manipulation"
-              style={{ fontSize: "16px" }}
+              style={{ fontSize: "16px", color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               autoComplete="username"
@@ -54,7 +54,7 @@ export default function LoginForm({ from }: { from: string }) {
             <input
               type="password"
               className="w-full rounded-lg border border-slate-600 bg-slate-900 px-3 py-3 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 min-h-[44px] touch-manipulation"
-              style={{ fontSize: "16px" }}
+              style={{ fontSize: "16px", color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
