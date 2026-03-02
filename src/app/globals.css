@@ -43,11 +43,9 @@ select {
   @apply focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20;
 }
 
-/* Login form - dark inputs, texto visible (override globals) */
-.login-form input[type="text"],
-.login-form input[type="password"] {
-  @apply border-slate-600 bg-slate-900 text-white placeholder-slate-500;
-  -webkit-text-fill-color: #ffffff;
+/* Login form - inputs claros para que el texto sea visible en móvil (evita bugs de Safari/Chrome con fondo oscuro) */
+.login-form .login-input {
+  @apply border-slate-500 bg-white text-slate-900 placeholder-slate-400;
 }
 
 /* Buttons */
@@ -70,4 +68,17 @@ select {
 /* Cards */
 .card {
   @apply rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md;
+}
+
+/* Print - ocultar sidebar y header en reportes */
+@media print {
+  aside,
+  nav,
+  .print\\:hidden,
+  [role="banner"] {
+    display: none !important;
+  }
+  main {
+    padding: 0 !important;
+  }
 }

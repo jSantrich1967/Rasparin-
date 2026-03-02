@@ -39,8 +39,8 @@ export default function LoginForm({ from }: { from: string }) {
             <label className="block text-sm font-medium text-slate-300 mb-1.5">Usuario</label>
             <input
               type="text"
-              className="w-full rounded-lg border border-slate-600 bg-slate-900 px-3 py-3 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 min-h-[44px] touch-manipulation"
-              style={{ fontSize: "16px", color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
+              className="login-input w-full rounded-lg border border-slate-500 bg-white px-3 py-3 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 min-h-[44px] touch-manipulation"
+              style={{ fontSize: "16px" }}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               autoComplete="username"
@@ -53,8 +53,8 @@ export default function LoginForm({ from }: { from: string }) {
             <label className="block text-sm font-medium text-slate-300 mb-1.5">Contraseña</label>
             <input
               type="password"
-              className="w-full rounded-lg border border-slate-600 bg-slate-900 px-3 py-3 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 min-h-[44px] touch-manipulation"
-              style={{ fontSize: "16px", color: "#ffffff", WebkitTextFillColor: "#ffffff" }}
+              className="login-input w-full rounded-lg border border-slate-500 bg-white px-3 py-3 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 min-h-[44px] touch-manipulation"
+              style={{ fontSize: "16px" }}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
