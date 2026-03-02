@@ -13,8 +13,8 @@ export default function LoginForm({ from }: { from: string }) {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      <div className="w-full max-w-md rounded-2xl border border-slate-700/50 bg-slate-800/50 p-6 sm:p-8 shadow-2xl backdrop-blur">
+    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-y-auto">
+      <div className="w-full max-w-md rounded-2xl border border-slate-700/50 bg-slate-800/50 p-6 sm:p-8 shadow-2xl backdrop-blur my-auto">
         <h1 className="text-2xl font-bold text-white">Tarjeteando</h1>
         <p className="text-slate-400 text-sm mt-1">Inicia sesión para continuar</p>
 
@@ -37,11 +37,13 @@ export default function LoginForm({ from }: { from: string }) {
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-1.5">Usuario</label>
             <input
-              className="w-full rounded-lg border border-slate-600 bg-slate-900/50 px-3 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+              type="text"
+              className="w-full rounded-lg border border-slate-600 bg-slate-900 px-3 py-3 text-base text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 min-h-[44px]"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               autoComplete="username"
               placeholder="Tu usuario"
+              inputMode="text"
             />
           </div>
 
@@ -49,11 +51,12 @@ export default function LoginForm({ from }: { from: string }) {
             <label className="block text-sm font-medium text-slate-300 mb-1.5">Contraseña</label>
             <input
               type="password"
-              className="w-full rounded-lg border border-slate-600 bg-slate-900/50 px-3 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+              className="w-full rounded-lg border border-slate-600 bg-slate-900 px-3 py-3 text-base text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 min-h-[44px]"
+              style={{ fontSize: "16px" }}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
-              placeholder="••••••••"
+              placeholder="Escribe tu contraseña"
             />
           </div>
 
@@ -62,7 +65,7 @@ export default function LoginForm({ from }: { from: string }) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-white text-slate-900 py-2.5 text-sm font-semibold hover:bg-slate-100 transition-colors disabled:opacity-50"
+            className="w-full rounded-lg bg-white text-slate-900 py-3 text-base font-semibold hover:bg-slate-100 transition-colors disabled:opacity-50 min-h-[48px]"
           >
             {loading ? "Entrando…" : "Entrar"}
           </button>
