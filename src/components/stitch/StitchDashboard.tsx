@@ -1,8 +1,38 @@
 "use client";
 
 import Link from "next/link";
+import { formatUSD, formatVES } from "@/lib/money";
 
-export function StitchDashboard() {
+export type StitchDashboardProps = {
+  totalDebtUSD: number;
+  totalDebtVES: number;
+  bcvRate: number;
+  realizedProfitUSD: number;
+  pendingDebtUSD: number;
+  opsCount: number;
+  pctOpen: number;
+  pctSettled: number;
+  pctCancelled: number;
+  bcvChartData: { date: Date; rate: number }[];
+  activityItems: { id: string; name: string; date: Date; amount: number; status: string }[];
+};
+
+export function StitchDashboard({
+  totalDebtUSD,
+  totalDebtVES,
+  bcvRate,
+  realizedProfitUSD,
+  pendingDebtUSD,
+  opsCount,
+  pctOpen,
+  pctSettled,
+  pctCancelled,
+  bcvChartData,
+  activityItems,
+}: StitchDashboardProps) {
+  const totalCircumference = 100;
+  const openDash = (pctOpen / 100) * totalCircumference;
+  const settledDash = (pctSettled / 100) * totalCircumference;
   return (
     <div className="min-h-screen flex flex-col bg-charcoal text-slate-200 antialiased stitch-dashboard">
       <style>{`
@@ -59,13 +89,15 @@ export function StitchDashboard() {
               <div>
                 <p className="text-slate-400 text-xs font-semibold uppercase tracking-widest mb-1">Deuda Total Pendiente</p>
                 <div className="flex items-baseline gap-2">
-                  <h2 className="text-4xl font-extrabold tracking-tight">$45,200.<span className="text-2xl opacity-50">00</span></h2>
+                  <h2 className="text-4xl font-extrabold tracking-tight">{formatUSD(totalDebtUSD)}</h2>
                 </div>
-                <p className="text-slate-500 text-xs mt-1 font-medium tracking-tight">≈ 1,647,540.00 VES <span className="text-[10px] opacity-40 italic ml-1">(36.45 BCV)</span></p>
+                <p className="text-slate-500 text-xs mt-1 font-medium tracking-tight">≈ {formatVES(totalDebtVES)} VES <span className="text-[10px] opacity-40 italic ml-1">({bcvRate > 0 ? bcvRate.toFixed(2) : "—"} BCV)</span></p>
               </div>
-              <div className="bg-red-500/10 text-red-400 px-2 py-1 rounded-lg text-[10px] font-bold flex items-center gap-1 border border-red-500/20">
-                <span className="material-symbols-outlined text-xs">trending_up</span> 2.4%
-              </div>
+              {bcvRate > 0 && (
+                <div className="bg-white/5 px-2 py-1 rounded-lg text-[10px] font-bold flex items-center gap-1 border border-white/10">
+                  <span className="material-symbols-outlined text-xs">currency_exchange</span> {bcvRate.toFixed(2)} VES
+                </div>
+              )}
             </div>
             <div className="h-16 w-full opacity-60">
               <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 300 60">
@@ -78,7 +110,9 @@ export function StitchDashboard() {
         <section className="grid grid-cols-2 gap-4">
           <div className="glass-card rounded-2xl p-4 relative overflow-hidden">
             <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-2">Ganancia Realizada</p>
-            <h3 className="text-xl font-bold text-emerald-accent">+$12,450</h3>
+            <h3 className={`text-xl font-bold ${realizedProfitUSD >= 0 ? "text-emerald-accent" : "text-red-400"}`}>
+              {realizedProfitUSD >= 0 ? "+" : ""}{formatUSD(realizedProfitUSD)}
+            </h3>
             <div className="mt-4 h-8">
               <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 30">
                 <path d="M0,25 Q25,5 50,20 T100,10" fill="none" stroke="#10b981" strokeLinecap="round" strokeWidth={2} />
@@ -86,8 +120,8 @@ export function StitchDashboard() {
             </div>
           </div>
           <div className="glass-card rounded-2xl p-4 relative overflow-hidden">
-            <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-2">Asignaciones Pendientes</p>
-            <h3 className="text-xl font-bold text-white">$8,900</h3>
+            <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-2">Deuda OPEN (USD)</p>
+            <h3 className="text-xl font-bold text-white">{formatUSD(pendingDebtUSD)}</h3>
             <div className="mt-4 h-8 opacity-40">
               <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 30">
                 <path d="M0,15 Q25,25 50,15 T100,20" fill="none" stroke="#94a3b8" strokeLinecap="round" strokeWidth={2} />
@@ -111,7 +145,7 @@ export function StitchDashboard() {
                 <p className="text-[10px] text-slate-500">Fluctuación cambiaria 30 días</p>
               </div>
               <div className="text-right">
-                <p className="text-xs font-bold text-electric-blue">36.45 VES</p>
+                <p className="text-xs font-bold text-electric-blue">{bcvRate > 0 ? `${bcvRate.toFixed(2)} VES` : "—"}</p>
                 <p className="text-[9px] text-slate-500 uppercase tracking-tighter">Tasa Actual</p>
               </div>
             </div>
@@ -130,21 +164,23 @@ export function StitchDashboard() {
                 <circle cx={400} cy={20} fill="#007AFF" r={3} stroke="white" strokeWidth={1} />
               </svg>
             </div>
-            <div className="flex justify-between mt-4 text-[9px] font-bold text-slate-600 uppercase">
-              <span>01 Oct</span>
-              <span>15 Oct</span>
-              <span>30 Oct</span>
-            </div>
+            {bcvChartData.length > 0 && (
+              <div className="flex justify-between mt-4 text-[9px] font-bold text-slate-600 uppercase">
+                <span>{new Date(bcvChartData[0]?.date).toLocaleDateString("es-VE", { day: "2-digit", month: "short" })}</span>
+                {bcvChartData.length > 1 && <span>{new Date(bcvChartData[Math.floor(bcvChartData.length / 2)]?.date).toLocaleDateString("es-VE", { day: "2-digit", month: "short" })}</span>}
+                <span>{new Date(bcvChartData[bcvChartData.length - 1]?.date).toLocaleDateString("es-VE", { day: "2-digit", month: "short" })}</span>
+              </div>
+            )}
           </div>
           <div className="glass-card rounded-3xl p-6 flex items-center justify-between gap-8">
             <div className="relative w-32 h-32 flex-shrink-0">
               <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
                 <circle cx={18} cy={18} fill="none" r={16} stroke="rgba(255,255,255,0.05)" strokeWidth={2.5} />
-                <circle className="drop-shadow-[0_0_8px_rgba(0,122,255,0.4)]" cx={18} cy={18} fill="none" r={16} stroke="#007AFF" strokeDasharray="65, 100" strokeLinecap="round" strokeWidth={3} />
-                <circle className="drop-shadow-[0_0_8px_rgba(16,185,129,0.4)]" cx={18} cy={18} fill="none" r={16} stroke="#10b981" strokeDasharray="20, 100" strokeDashoffset={-65} strokeLinecap="round" strokeWidth={3} />
+                <circle className="drop-shadow-[0_0_8px_rgba(0,122,255,0.4)]" cx={18} cy={18} fill="none" r={16} stroke="#007AFF" strokeDasharray={`${openDash}, 100`} strokeLinecap="round" strokeWidth={3} />
+                <circle className="drop-shadow-[0_0_8px_rgba(16,185,129,0.4)]" cx={18} cy={18} fill="none" r={16} stroke="#10b981" strokeDasharray={`${settledDash}, 100`} strokeDashoffset={-openDash} strokeLinecap="round" strokeWidth={3} />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-xl font-black text-white">85</span>
+                <span className="text-xl font-black text-white">{opsCount}</span>
                 <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">Ops</span>
               </div>
             </div>
@@ -155,21 +191,21 @@ export function StitchDashboard() {
                   <span className="w-2 h-2 rounded-full bg-electric-blue glow-blue" />
                   <span className="text-[11px] font-medium text-slate-300">Deuda Abierta</span>
                 </div>
-                <span className="text-xs font-bold text-white">65%</span>
+                <span className="text-xs font-bold text-white">{pctOpen}%</span>
               </div>
               <div className="flex items-center justify-between group">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-emerald-accent glow-emerald" />
                   <span className="text-[11px] font-medium text-slate-300">Conciliado</span>
                 </div>
-                <span className="text-xs font-bold text-white">20%</span>
+                <span className="text-xs font-bold text-white">{pctSettled}%</span>
               </div>
               <div className="flex items-center justify-between group opacity-40">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-slate-500" />
-                  <span className="text-[11px] font-medium text-slate-300">Pendiente</span>
+                  <span className="text-[11px] font-medium text-slate-300">Cancelado</span>
                 </div>
-                <span className="text-xs font-bold text-white">15%</span>
+                <span className="text-xs font-bold text-white">{pctCancelled}%</span>
               </div>
             </div>
           </div>
@@ -183,43 +219,45 @@ export function StitchDashboard() {
             </Link>
           </div>
           <div className="space-y-3">
-            <div className="glass-card rounded-2xl p-4 flex items-center justify-between border-l-4 border-l-emerald-accent/50">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400">
-                  <span className="material-symbols-outlined font-light">person</span>
-                </div>
-                <div>
-                  <h4 className="text-[13px] font-bold text-white">Juan Perez</h4>
-                  <p className="text-[10px] text-slate-500 font-medium">Hoy • 14:32</p>
-                </div>
+            {activityItems.length === 0 ? (
+              <div className="glass-card rounded-2xl p-6 text-center text-slate-500 text-sm">
+                No hay operaciones recientes
               </div>
-              <div className="text-right">
-                <p className="text-[13px] font-black text-white">$1,200.00</p>
-                <p className="text-[10px] text-emerald-accent font-bold uppercase tracking-tighter">Liquidado</p>
-              </div>
-            </div>
-            <div className="glass-card rounded-2xl p-4 flex items-center justify-between border-l-4 border-l-electric-blue/50">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400">
-                  <span className="material-symbols-outlined font-light">business</span>
+            ) : (
+              activityItems.map((item) => (
+                <div
+                  key={item.id}
+                  className={`glass-card rounded-2xl p-4 flex items-center justify-between border-l-4 ${
+                    item.status === "SETTLED" ? "border-l-emerald-accent/50" : "border-l-electric-blue/50"
+                  }`}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400">
+                      <span className="material-symbols-outlined font-light">{item.status === "SETTLED" ? "person" : "business"}</span>
+                    </div>
+                    <div>
+                      <h4 className="text-[13px] font-bold text-white">{item.name}</h4>
+                      <p className="text-[10px] text-slate-500 font-medium">
+                        {new Date(item.date).toLocaleDateString("es-VE", { day: "numeric", month: "short" })} • {new Date(item.date).toLocaleTimeString("es-VE", { hour: "2-digit", minute: "2-digit" })}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[13px] font-black text-white">{formatUSD(item.amount)}</p>
+                    <p className={`text-[10px] font-bold uppercase tracking-tighter ${item.status === "SETTLED" ? "text-emerald-accent" : "text-electric-blue"}`}>
+                      {item.status === "SETTLED" ? "Liquidado" : "Activa"}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-[13px] font-bold text-white">Inversiones CCS</h4>
-                  <p className="text-[10px] text-slate-500 font-medium">Ayer • 09:15</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="text-[13px] font-black text-white">$4,500.00</p>
-                <p className="text-[10px] text-electric-blue font-bold uppercase tracking-tighter">Activa</p>
-              </div>
-            </div>
+              ))
+            )}
           </div>
         </section>
       </main>
 
       <nav className="fixed bottom-0 left-0 right-0 z-[100] glass-nav px-8 pt-4 pb-8">
         <div className="max-w-md mx-auto flex justify-between items-center">
-          <Link href="/dashboard" className="flex flex-col items-center gap-1.5 text-electric-blue">
+          <Link href="/stitch" className="flex flex-col items-center gap-1.5 text-electric-blue">
             <div className="relative">
               <span className="material-symbols-outlined text-[26px]" style={{ fontVariationSettings: '"FILL" 1' }}>grid_view</span>
               <div className="absolute -inset-2 bg-electric-blue/20 blur-md rounded-full -z-10" />
