@@ -1,5 +1,6 @@
 {
   "name": "tarjeteando_app",
+  "packageManager": "pnpm@10.11.1",
   "version": "0.1.0",
   "private": true,
   "scripts": {
