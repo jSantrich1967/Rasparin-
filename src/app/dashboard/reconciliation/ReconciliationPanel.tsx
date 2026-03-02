@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { formatVES } from "@/lib/money";
 import { calcDebtVES } from "@/lib/calc";
+import { useRef } from "react";
 
 type Payment = {
   id: string;
@@ -53,6 +54,7 @@ export function ReconciliationPanel({
 }) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const inputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -97,18 +99,18 @@ export function ReconciliationPanel({
   return (
     <div className="space-y-6">
       <div>
-        <label className="block text-sm font-medium text-slate-400 mb-2">Seleccionar pago</label>
+        <label className="block text-sm font-medium text-slate-200 mb-2">Seleccionar pago</label>
         <select
-          className="rounded-lg border border-slate-200 px-3 py-2 text-sm w-full max-w-md focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+          className="rounded-lg border border-white/20 bg-slate-800/50 px-3 py-2.5 text-sm w-full max-w-md text-white focus:border-electric-blue focus:outline-none focus:ring-2 focus:ring-electric-blue/30"
           value={paymentDetail?.id ?? ""}
           onChange={(e) => {
             const id = e.target.value;
             router.push(id ? `/dashboard/reconciliation?payment=${id}` : "/dashboard/reconciliation");
           }}
         >
-          <option value="">-- Elige un pago --</option>
+          <option value="" className="bg-slate-800 text-slate-300">-- Elige un pago --</option>
           {payments.map((p) => (
-            <option key={p.id} value={p.id}>
+            <option key={p.id} value={p.id} className="bg-slate-800 text-white">
               {new Date(p.date).toISOString().slice(0, 10)} — {p.card.alias} — {formatVES(p.amountVES.toString())} VES
             </option>
           ))}
@@ -116,23 +118,23 @@ export function ReconciliationPanel({
       </div>
 
       {paymentDetail && (
-        <div className="p-4 sm:p-5 bg-slate-50 rounded-xl border border-slate-200">
-          <p className="font-medium text-white">
+        <div className="p-4 sm:p-5 bg-slate-800/40 rounded-xl border border-white/10">
+          <p className="font-semibold text-white text-base">
             Pago: {new Date(paymentDetail.date).toISOString().slice(0, 10)} — {paymentDetail.card.alias} — {formatVES(paymentDetail.amountVES.toString())} VES
           </p>
-          <p className="text-sm text-slate-600 mt-1">Asigna montos a cada operación. Total asignado no puede superar el monto del pago.</p>
+          <p className="text-sm text-slate-300 mt-1">Haz clic en el monto sugerido o escribe uno distinto si hay diferencia.</p>
 
           <form onSubmit={handleSubmit} className="mt-4 space-y-3">
             <input type="hidden" name="paymentId" value={paymentDetail.id} />
             <div className="overflow-x-auto -mx-4 sm:mx-0">
               <table className="w-full text-sm border-collapse min-w-[500px]">
                 <thead>
-                  <tr className="border-b border-slate-200">
-                    <th className="text-left py-3 px-2 font-medium text-slate-600">Fecha</th>
-                    <th className="text-left py-3 px-2 font-medium text-slate-600">Contraparte</th>
-                    <th className="text-right py-3 px-2 font-medium text-slate-600">Deuda VES</th>
-                    <th className="text-right py-3 px-2 font-medium text-slate-600 hidden sm:table-cell">Ya asignado</th>
-                    <th className="text-right py-3 px-2 font-medium text-slate-600">VES a asignar</th>
+                  <tr className="border-b border-white/10">
+                    <th className="text-left py-3 px-2 font-medium text-slate-300">Fecha</th>
+                    <th className="text-left py-3 px-2 font-medium text-slate-300">Contraparte</th>
+                    <th className="text-right py-3 px-2 font-medium text-slate-300">Deuda VES</th>
+                    <th className="text-right py-3 px-2 font-medium text-slate-300 hidden sm:table-cell">Ya asignado</th>
+                    <th className="text-right py-3 px-2 font-medium text-slate-300">VES a asignar</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -141,23 +143,42 @@ export function ReconciliationPanel({
                     const totalAllocatedToOp = op.allocations.reduce((acc, a) => acc + Number(a.amountVESApplied.toString()), 0);
                     const remaining = Math.max(0, Number(debtVES.toFixed(2)) - totalAllocatedToOp);
                     const currentForThisPayment = allocatedByOp.get(op.id) ?? 0;
+                    const suggestedAmount = remaining > 0 ? remaining.toFixed(2) : "";
                     return (
-                      <tr key={op.id} className="border-b border-slate-100">
-                        <td className="py-2 px-2">{new Date(op.date).toISOString().slice(0, 10)}</td>
-                        <td className="py-2 px-2">{op.counterparty.name}</td>
-                        <td className="py-2 px-2 text-right">{formatVES(debtVES)}</td>
-                        <td className="py-2 px-2 text-right hidden sm:table-cell">{formatVES(currentForThisPayment)}</td>
-                        <td className="py-2 px-2 text-right">
-                          <input
-                            type="number"
-                            name={`op_${op.id}`}
-                            step="0.01"
-                            min="0"
-                            max={remaining}
-                            defaultValue={currentForThisPayment || ""}
-                            placeholder="0"
-                            className="w-20 sm:w-24 rounded-lg border border-slate-200 px-2 py-1 text-right text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                          />
+                      <tr key={op.id} className="border-b border-white/5 hover:bg-white/5">
+                        <td className="py-2.5 px-2 text-slate-200">{new Date(op.date).toISOString().slice(0, 10)}</td>
+                        <td className="py-2.5 px-2 text-white font-medium">{op.counterparty.name}</td>
+                        <td className="py-2.5 px-2 text-right text-slate-200">{formatVES(debtVES)}</td>
+                        <td className="py-2.5 px-2 text-right text-slate-400 hidden sm:table-cell">{formatVES(currentForThisPayment)}</td>
+                        <td className="py-2.5 px-2 text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            {remaining > 0 && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const input = inputRefs.current[op.id];
+                                  if (input) {
+                                    input.value = suggestedAmount;
+                                    input.focus();
+                                  }
+                                }}
+                                className="px-2 py-1 rounded-lg bg-electric-blue/20 text-electric-blue text-xs font-semibold hover:bg-electric-blue/30 transition-colors"
+                              >
+                                {formatVES(remaining)}
+                              </button>
+                            )}
+                            <input
+                              ref={(el) => { inputRefs.current[op.id] = el; }}
+                              type="number"
+                              name={`op_${op.id}`}
+                              step="0.01"
+                              min="0"
+                              inputMode="decimal"
+                              defaultValue={currentForThisPayment || ""}
+                              placeholder="0"
+                              className="w-24 sm:w-28 rounded-lg border border-white/20 bg-slate-900/50 px-2 py-1.5 text-right text-sm text-white placeholder-slate-500 focus:border-electric-blue focus:outline-none focus:ring-2 focus:ring-electric-blue/30"
+                            />
+                          </div>
                         </td>
                       </tr>
                     );
@@ -167,11 +188,11 @@ export function ReconciliationPanel({
             </div>
             {operationsOfCard.length === 0 ? (
               <div className="space-y-1">
-                <p className="text-amber-500 text-sm font-medium">No hay operaciones para asignar en esta tarjeta.</p>
-                <p className="text-slate-500 text-xs">El pago es de {paymentDetail.card.alias}. Necesitas operaciones OPEN o SETTLED de la misma tarjeta. Crea operaciones en Operaciones y asegúrate de usar la misma tarjeta.</p>
+                <p className="text-amber-400 text-sm font-medium">No hay operaciones para asignar en esta tarjeta.</p>
+                <p className="text-slate-400 text-xs">El pago es de {paymentDetail.card.alias}. Necesitas operaciones OPEN o SETTLED de la misma tarjeta.</p>
               </div>
             ) : (
-              <p className="text-slate-500 text-xs">Ingresa el monto en VES a asignar a cada operación. El total no puede superar {formatVES(paymentDetail.amountVES.toString())}.</p>
+              <p className="text-slate-400 text-xs">Clic en el monto azul para llenar, o escribe uno distinto. Total máx: {formatVES(paymentDetail.amountVES.toString())}.</p>
             )}
             <button type="submit" disabled={isPending || operationsOfCard.length === 0} className="btn-primary mt-2">
               {isPending ? "Guardando…" : "Guardar conciliación"}
