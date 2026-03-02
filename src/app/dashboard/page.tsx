@@ -37,8 +37,10 @@ export default async function DashboardPage() {
         merchantFeePercent: op.merchantFeePercent.toString(),
       });
       const shareUsdCashReceived = fees.usdCashReceived.mul(share);
-      const rateInfo = getRate(payment.date);
-      const marketOrBcv = rateInfo?.marketRate ?? payment.bcvRateOnPayment.toString();
+      const paymentDayEnd = new Date(payment.date);
+      paymentDayEnd.setUTCHours(23, 59, 59, 999);
+      const rateInfo = getRate(paymentDayEnd);
+      const marketOrBcv = rateInfo?.marketRate ?? rateInfo?.bcvRate ?? payment.bcvRateOnPayment.toString();
       realizedProfitUSD = realizedProfitUSD.add(
         calcProfitRealizedUSDWithMarket({
           usdCashReceived: shareUsdCashReceived,

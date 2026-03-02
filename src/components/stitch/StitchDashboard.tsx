@@ -128,6 +128,11 @@ export function StitchDashboard({
             <h3 className={`text-xl font-bold ${realizedProfitUSD >= 0 ? "text-emerald-accent" : "text-red-400"}`}>
               {realizedProfitUSD >= 0 ? "+" : ""}{formatUSD(realizedProfitUSD)}
             </h3>
+            {realizedProfitUSD <= 0 && (
+              <p className="text-[9px] text-amber-500/90 mt-1" title="La ganancia requiere tasa de mercado &gt; BCV. Agrega la tasa de mercado en Tasas BCV y Mercado para la fecha del pago.">
+                Requiere tasa mercado
+              </p>
+            )}
             <div className="mt-4 h-8">
               <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 30">
                 <path d="M0,25 Q25,5 50,20 T100,10" fill="none" stroke="#10b981" strokeLinecap="round" strokeWidth={2} />
