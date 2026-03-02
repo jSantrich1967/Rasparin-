@@ -14,12 +14,13 @@ export default function LoginForm({ from }: { from: string }) {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-y-auto">
-      <div className="w-full max-w-md rounded-2xl border border-slate-700/50 bg-slate-800/50 p-6 sm:p-8 shadow-2xl backdrop-blur my-auto">
+      {/* Solid background (no backdrop-blur) - backdrop-blur blocks touch/input on mobile Safari */}
+      <div className="w-full max-w-md rounded-2xl border border-slate-700/50 bg-slate-800 p-6 sm:p-8 shadow-2xl my-auto">
         <h1 className="text-2xl font-bold text-white">Tarjeteando</h1>
         <p className="text-slate-400 text-sm mt-1">Inicia sesión para continuar</p>
 
         <form
-          className="mt-6 space-y-4"
+          className="mt-6 space-y-4 touch-manipulation"
           onSubmit={async (e) => {
             e.preventDefault();
             setLoading(true);
@@ -38,7 +39,8 @@ export default function LoginForm({ from }: { from: string }) {
             <label className="block text-sm font-medium text-slate-300 mb-1.5">Usuario</label>
             <input
               type="text"
-              className="w-full rounded-lg border border-slate-600 bg-slate-900 px-3 py-3 text-base text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 min-h-[44px]"
+              className="w-full rounded-lg border border-slate-600 bg-slate-900 px-3 py-3 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 min-h-[44px] touch-manipulation"
+              style={{ fontSize: "16px" }}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               autoComplete="username"
@@ -51,14 +53,11 @@ export default function LoginForm({ from }: { from: string }) {
             <label className="block text-sm font-medium text-slate-300 mb-1.5">Contraseña</label>
             <input
               type="password"
-              name="login-password"
-              className="w-full rounded-lg border border-slate-600 bg-slate-900 px-3 py-3 text-base text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 min-h-[44px]"
+              className="w-full rounded-lg border border-slate-600 bg-slate-900 px-3 py-3 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 min-h-[44px] touch-manipulation"
               style={{ fontSize: "16px" }}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              onFocus={(e) => e.currentTarget.removeAttribute("readonly")}
-              readOnly
-              autoComplete="off"
+              autoComplete="current-password"
               placeholder="Escribe tu contraseña"
             />
           </div>
