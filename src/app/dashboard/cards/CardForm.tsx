@@ -48,7 +48,8 @@ export function CardForm({ createAction, banks }: { createAction: CreateAction; 
       </label>
       <label className="flex flex-col gap-1.5">
         <span className="text-sm font-medium text-slate-600">Saldo apertura VES</span>
-        <input type="number" name="openingBalanceVES" step="0.01" defaultValue="0" className="rounded-lg border border-slate-200 px-3 py-2 text-sm w-28 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+        <input type="number" name="openingBalanceVES" step="0.01" defaultValue="0" className="rounded-lg border border-slate-200 px-3 py-2 text-sm w-28 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" title="Deuda que tenías al empezar a registrar (0 si empiezas desde cero)" />
+        <span className="text-[10px] text-slate-500">Deuda inicial. 0 si empiezas desde cero.</span>
       </label>
       <button type="submit" disabled={isPending} className="btn-primary shrink-0">
         {isPending ? "Guardando…" : "Añadir"}

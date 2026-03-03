@@ -2,6 +2,7 @@
 
 import { useTransition, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 import { formatVES } from "@/lib/money";
@@ -15,10 +16,26 @@ type Card = {
   status: string;
   bankName: string;
 };
+type Balance = {
+  totalDebtVES: number;
+  totalPaymentsVES: number;
+  usedVES: number;
+  availableVES: number;
+};
 type UpdateAction = (formData: FormData) => Promise<{ ok: true } | { ok: false; message: string }>;
 type DeleteAction = (id: string) => Promise<{ ok: true } | { ok: false; message: string }>;
 
-export function CardRow({ card, updateAction, deleteAction }: { card: Card; updateAction: UpdateAction; deleteAction: DeleteAction }) {
+export function CardRow({
+  card,
+  balance,
+  updateAction,
+  deleteAction,
+}: {
+  card: Card;
+  balance: Balance;
+  updateAction: UpdateAction;
+  deleteAction: DeleteAction;
+}) {
   const [editing, setEditing] = useState(false);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -78,7 +95,15 @@ export function CardRow({ card, updateAction, deleteAction }: { card: Card; upda
     >
       <span className="text-sm">
         <strong className="text-white">{card.alias}</strong> <span className="text-slate-500">({card.bankName})</span>
-        <span className="text-slate-600 ml-2">Límite: {formatVES(card.creditLimitVES)} — Saldo: {formatVES(card.openingBalanceVES)}</span>
+        <span className="text-slate-600 ml-2" title={`Apertura + Ops (${formatVES(balance.totalDebtVES)}) − Pagos (${formatVES(balance.totalPaymentsVES)}) = Deuda`}>
+          Límite: {formatVES(card.creditLimitVES)} — Deuda: {formatVES(balance.usedVES)} — Disponible: {formatVES(balance.availableVES)}
+        </span>
+        <Link href={`/dashboard/operations?card=${card.id}`} className="ml-1 text-xs text-slate-500 hover:text-electric-blue">Ver ops</Link>
+        {balance.usedVES > parseFloat(card.creditLimitVES) && (
+          <span className="ml-2 text-xs text-amber-500" title="La deuda supera el límite. Revisa operaciones o saldo apertura.">
+            ⚠ Sobrelímite
+          </span>
+        )}
         <span className={`ml-2 text-xs ${card.status === "ACTIVE" ? "text-emerald-600" : "text-slate-500"}`}>{card.status}</span>
       </span>
       <div className="flex gap-3">
