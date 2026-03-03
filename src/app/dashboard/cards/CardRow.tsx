@@ -93,18 +93,31 @@ export function CardRow({
       animate={{ opacity: 1 }}
       className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 px-4 sm:px-5 py-3 sm:py-4 hover:bg-white/5 transition-colors"
     >
-      <span className="text-sm">
-        <strong className="text-white">{card.alias}</strong> <span className="text-slate-500">({card.bankName})</span>
-        <span className="text-slate-600 ml-2" title={`Apertura + Ops (${formatVES(balance.totalDebtVES)}) − Pagos (${formatVES(balance.totalPaymentsVES)}) = Deuda`}>
-          Límite: {formatVES(card.creditLimitVES)} — Deuda: {formatVES(balance.usedVES)} — Disponible: {formatVES(balance.availableVES)}
+      <span className="text-sm flex flex-wrap items-center gap-x-3 gap-y-1">
+        <strong className="text-white">{card.alias}</strong>
+        <span className="text-slate-400">({card.bankName})</span>
+        <span className="text-slate-400">|</span>
+        <span title={`Apertura + Ops (${formatVES(balance.totalDebtVES)}) − Pagos (${formatVES(balance.totalPaymentsVES)}) = Deuda`}>
+          <span className="text-slate-400">Límite</span>
+          <span className="ml-1 font-semibold text-electric-blue">{formatVES(card.creditLimitVES)}</span>
         </span>
-        <Link href={`/dashboard/operations?card=${card.id}`} className="ml-1 text-xs text-slate-500 hover:text-electric-blue">Ver ops</Link>
+        <span>
+          <span className="text-slate-400">Deuda</span>
+          <span className="ml-1 font-semibold text-amber-400">{formatVES(balance.usedVES)}</span>
+        </span>
+        <span>
+          <span className="text-slate-400">Disponible</span>
+          <span className={`ml-1 font-semibold ${balance.availableVES >= 0 ? "text-emerald-accent" : "text-red-400"}`}>
+            {formatVES(balance.availableVES)}
+          </span>
+        </span>
+        <Link href={`/dashboard/operations?card=${card.id}`} className="text-electric-blue hover:underline font-medium">Ver ops</Link>
         {balance.usedVES > parseFloat(card.creditLimitVES) && (
-          <span className="ml-2 text-xs text-amber-500" title="La deuda supera el límite. Revisa operaciones o saldo apertura.">
+          <span className="text-amber-400 font-medium" title="La deuda supera el límite. Revisa operaciones o saldo apertura.">
             ⚠ Sobrelímite
           </span>
         )}
-        <span className={`ml-2 text-xs ${card.status === "ACTIVE" ? "text-emerald-600" : "text-slate-500"}`}>{card.status}</span>
+        <span className={`text-xs font-medium ${card.status === "ACTIVE" ? "text-emerald-accent" : "text-slate-500"}`}>{card.status}</span>
       </span>
       <div className="flex gap-3">
         <button type="button" onClick={() => setEditing(true)} className="text-sm text-blue-600 hover:underline">Editar</button>
