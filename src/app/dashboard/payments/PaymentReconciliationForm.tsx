@@ -2,6 +2,7 @@
 
 import { useTransition, useState, useRef, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import toast from "react-hot-toast";
 import { formatVES } from "@/lib/money";
 import { calcDebtVES } from "@/lib/calc";
@@ -181,7 +182,15 @@ export function PaymentReconciliationForm({
           </table>
         </div>
         {operationsOfCard.length === 0 ? (
-          <p className="text-amber-400 text-sm">No hay operaciones OPEN/SETTLED en esta tarjeta.</p>
+          <div className="rounded-lg bg-amber-500/10 border border-amber-500/30 p-4 text-sm">
+            <p className="text-amber-400 font-medium mb-1">No hay deudas (operaciones) en esta tarjeta.</p>
+            <p className="text-slate-400 mb-3">
+              Para asignar este pago, primero debes crear operaciones (cash advance) en la misma tarjeta. Cada operación es una deuda que puedes ir pagando.
+            </p>
+            <Link href="/dashboard/operations" className="text-electric-blue hover:underline font-medium">
+              Ir a Operaciones para crear deudas →
+            </Link>
+          </div>
         ) : (
           <>
             <div className={`flex flex-wrap items-center gap-2 text-sm ${totalAssigned > paymentTotal ? "text-red-400" : "text-slate-300"}`}>
