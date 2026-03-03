@@ -5,6 +5,9 @@ import { CardForm } from "./CardForm";
 import { CardRow } from "./CardRow";
 import { calcDebtVES, calcUsedAndAvailable } from "@/lib/calc";
 import { d, round2 } from "@/lib/money";
+
+export const dynamic = "force-dynamic";
+
 async function createCard(formData: FormData): Promise<{ ok: true } | { ok: false; message: string }> {
   "use server";
   const alias = (formData.get("alias") as string)?.trim();
@@ -40,8 +43,8 @@ async function updateCard(formData: FormData): Promise<{ ok: true } | { ok: fals
   const openingBalanceVES = formData.get("openingBalanceVES") as string;
   const status = formData.get("status") as string;
   if (!id || !alias) return { ok: false, message: "ID y alias requeridos" };
-  const limit = creditLimitVES ? parseFloat(creditLimitVES) : 0;
-  const opening = openingBalanceVES ? parseFloat(openingBalanceVES) : 0;
+  const limit = parseFloat(String(creditLimitVES || "0"));
+  const opening = parseFloat(String(openingBalanceVES || "0"));
   if (Number.isNaN(limit) || Number.isNaN(opening)) return { ok: false, message: "Límite y saldo deben ser números" };
   const validStatus = status === "ACTIVE" || status === "INACTIVE" ? status : "ACTIVE";
   try {
@@ -50,6 +53,7 @@ async function updateCard(formData: FormData): Promise<{ ok: true } | { ok: fals
       data: { alias, creditLimitVES: limit, openingBalanceVES: opening, status: validStatus },
     });
     revalidatePath("/dashboard/cards");
+    revalidatePath("/dashboard");
     revalidatePath("/dashboard/operations");
     revalidatePath("/dashboard/payments");
     return { ok: true };
