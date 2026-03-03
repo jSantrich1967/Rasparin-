@@ -3,11 +3,11 @@
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { createPayment } from "./actions";
 
 type Card = { id: string; alias: string; bank: { name: string } | null };
-type CreateAction = (formData: FormData) => Promise<{ ok: true } | { ok: false; message: string }>;
 
-export function PaymentForm({ createAction, cards }: { createAction: CreateAction; cards: Card[] }) {
+export function PaymentForm({ cards }: { cards: Card[] }) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -17,7 +17,7 @@ export function PaymentForm({ createAction, cards }: { createAction: CreateActio
     const formData = new FormData(form);
     startTransition(async () => {
       try {
-        const result = await createAction(formData);
+        const result = await createPayment(formData);
         if (result.ok) {
           toast.success("Pago registrado");
           router.refresh();

@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { PageSection } from "../PageSection";
 import { PaymentForm } from "./PaymentForm";
 import { PaymentRow } from "./PaymentRow";
-import { createPayment, deletePayment, submitAllocations } from "./actions";
+import { deletePayment, submitAllocations } from "./actions";
 
 export default async function PaymentsPage({
   searchParams,
@@ -38,7 +38,7 @@ export default async function PaymentsPage({
   return (
     <PageSection title="Pagos" description="Pagos en VES a la tarjeta. Haz clic en «Asignar a deudas» en cada pago para elegir qué operación pagar.">
       <div className="rounded-2xl stitch-glass p-4 sm:p-5 shadow-sm mb-6">
-        <PaymentForm createAction={createPayment} cards={cards} />
+        <PaymentForm cards={cards} />
       </div>
       <ul className="divide-y divide-white/10 rounded-2xl stitch-glass shadow-sm overflow-hidden">
         {payments.map((p) => (
