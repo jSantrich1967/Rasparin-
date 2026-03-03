@@ -107,7 +107,8 @@ export default async function GainsReportPage() {
 
     realizedProfitUSD = round2(realizedProfitUSD);
 
-    // Ganancia no realizada: OPEN valoradas con tasa de mercado (costo real estimado = deuda VES ÷ tasa mercado)
+    // Ganancia no realizada: OPEN valoradas con ÚLTIMA tasa de mercado registrada (costo real estimado = deuda VES ÷ tasa)
+    const lastRateInfo = getRate(new Date()); // Último dólar de mercado registrado
     const unrealizedRows: UnrealizedRow[] = [];
     let unrealizedProfitUSD = d(0);
     for (const op of openOperations) {
@@ -115,11 +116,8 @@ export default async function GainsReportPage() {
         usdCharged: op.usdCharged.toString(),
         bcvRateOnCharge: op.bcvRateOnCharge.toString(),
       });
-      const opDayEnd = new Date(op.date);
-      opDayEnd.setUTCHours(23, 59, 59, 999);
-      const rateInfo = getRate(opDayEnd);
-      // Costo real estimado = deuda VES ÷ tasa de mercado (fallback a BCV si no hay mercado)
-      const marketRate = rateInfo?.marketRate ?? rateInfo?.bcvRate ?? op.bcvRateOnCharge.toString();
+      // Usar última tasa de mercado registrada para todas las OPEN
+      const marketRate = lastRateInfo?.marketRate ?? lastRateInfo?.bcvRate ?? op.bcvRateOnCharge.toString();
       const rateNum = Number(marketRate);
       if (rateNum <= 0) continue;
       const debtUSDAtLastRate = debtVES.div(rateNum);
@@ -130,7 +128,7 @@ export default async function GainsReportPage() {
       });
       const profit = fees.usdCashReceived.sub(debtUSDAtLastRate);
       unrealizedProfitUSD = unrealizedProfitUSD.add(profit);
-      const usedMarket = rateInfo?.usedMarketRate ?? false;
+      const usedMarket = lastRateInfo?.usedMarketRate ?? false;
       unrealizedRows.push({
         opId: op.id,
         opDate: new Date(op.date).toISOString().slice(0, 10),
@@ -171,7 +169,7 @@ export default async function GainsReportPage() {
                 <strong>Ganancia = USD obtenidos − (Deuda VES ÷ tasa de mercado)</strong>
               </p>
               <p className="text-slate-400 text-xs mt-2">
-                Para operaciones OPEN. El costo real estimado = deuda VES ÷ tasa de mercado (fallback a BCV si no hay mercado cargado).
+                Para operaciones OPEN. Usa la última tasa de mercado registrada en el sistema (fallback a BCV si no hay mercado).
               </p>
             </div>
           </div>
@@ -190,7 +188,7 @@ export default async function GainsReportPage() {
               <div className={`text-2xl font-bold mt-1 ${Number(unrealizedProfitUSD) >= 0 ? "text-amber-400" : "text-red-400"}`}>
                 {formatUSD(unrealizedProfitUSD)}
               </div>
-              <p className="text-xs text-slate-500 mt-1">OPEN valoradas con tasa de mercado</p>
+              <p className="text-xs text-slate-500 mt-1">OPEN con última tasa mercado</p>
             </div>
             <div className="rounded-2xl stitch-glass p-4 sm:p-5 border border-electric-blue/30">
               <div className="text-sm font-medium text-electric-blue">Total estimado</div>

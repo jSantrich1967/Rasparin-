@@ -55,14 +55,12 @@ export default async function DashboardPage() {
     }
     realizedProfitUSD = round2(realizedProfitUSD);
 
+    // Ganancia no realizada: usa la última tasa de mercado registrada
+    const lastRateInfo = getRate(new Date());
     let unrealizedProfitUSD = d(0);
     for (const op of openOperations) {
       const debtVES = calcDebtVES({ usdCharged: op.usdCharged.toString(), bcvRateOnCharge: op.bcvRateOnCharge.toString() });
-      const opDayEnd = new Date(op.date);
-      opDayEnd.setUTCHours(23, 59, 59, 999);
-      const rateInfo = getRate(opDayEnd);
-      // Costo real estimado = deuda VES ÷ tasa de mercado (fallback a BCV)
-      const marketRate = rateInfo?.marketRate ?? rateInfo?.bcvRate ?? op.bcvRateOnCharge.toString();
+      const marketRate = lastRateInfo?.marketRate ?? lastRateInfo?.bcvRate ?? op.bcvRateOnCharge.toString();
       const rateNum = Number(marketRate);
       if (rateNum <= 0) continue;
       const debtUSDAtLastRate = debtVES.div(rateNum);
@@ -140,7 +138,7 @@ export default async function DashboardPage() {
             <div className={`text-2xl font-bold mt-1 ${Number(unrealizedProfitUSD) >= 0 ? "text-amber-400" : "text-red-400"}`}>
               {formatUSD(unrealizedProfitUSD)}
             </div>
-            <p className="text-xs text-slate-500 mt-1">OPEN valoradas con tasa de mercado</p>
+            <p className="text-xs text-slate-500 mt-1">OPEN con última tasa mercado</p>
           </div>
         </div>
 
