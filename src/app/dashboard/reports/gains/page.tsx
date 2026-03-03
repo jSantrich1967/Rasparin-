@@ -125,10 +125,10 @@ export default async function GainsReportPage() {
           <div className="rounded-2xl stitch-glass p-4 sm:p-5 border border-electric-blue/20">
             <h3 className="text-sm font-semibold text-electric-blue mb-2">Fórmula de ganancia realizada</h3>
             <p className="text-slate-300 text-sm">
-              Para cada asignación (conciliación): <strong>Ganancia = USD recibido − (VES asignados ÷ tasa)</strong>
+              <strong>Ganancia = USD obtenidos − Costo real en USD</strong>
             </p>
             <p className="text-slate-400 text-xs mt-2">
-              El &quot;USD recibido&quot; es la parte proporcional del efectivo neto (tras fees). La tasa usada es la de mercado si existe para la fecha del pago; si no, BCV.
+              USD obtenidos = efectivo neto (tras fees) de la operación. Costo real en USD = VES asignados ÷ tasa de mercado (o BCV si no hay mercado).
             </p>
           </div>
 
@@ -175,8 +175,8 @@ export default async function GainsReportPage() {
                         <th className="text-left px-4 py-3 font-medium text-slate-400">Tarjeta</th>
                         <th className="text-right px-4 py-3 font-medium text-slate-400">VES asignados</th>
                         <th className="text-right px-4 py-3 font-medium text-slate-400">Tasa usada</th>
-                        <th className="text-right px-4 py-3 font-medium text-slate-400">USD costo</th>
-                        <th className="text-right px-4 py-3 font-medium text-slate-400">USD recibido</th>
+                        <th className="text-right px-4 py-3 font-medium text-slate-400">Costo real USD</th>
+                        <th className="text-right px-4 py-3 font-medium text-slate-400">USD obtenidos</th>
                         <th className="text-right px-4 py-3 font-medium text-slate-400">Ganancia USD</th>
                       </tr>
                     </thead>

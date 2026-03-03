@@ -18,9 +18,9 @@ App web (responsive) para controlar operaciones de **cash advance indirecto** en
   - merchant fee (default 1%)
   - efectivo neto recibido en USD = `usdCharged - fees`
 - Conciliación por **Allocation** (pago en VES aplicado a operaciones de la misma tarjeta).
-- Ganancia:
-  - **Realizada**: basada en allocations (USD equivalente pagado)
-  - **No realizada**: para OPEN, usando BCV de la **última tasa cargada para la fecha de la operación** (pendiente de implementar en dashboard)
+- Ganancia: **USD obtenidos − Costo real en USD**
+  - **Realizada**: por asignación (allocations), usando tasa de mercado para el costo real
+  - **No realizada**: para OPEN, usando BCV de la última tasa cargada
 
 ## Setup local
 

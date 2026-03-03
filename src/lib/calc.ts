@@ -57,9 +57,9 @@ export function calcProfitRealizedUSD(params: {
 }
 
 /**
- * Ganancia realizada usando tasa de mercado para el "costo" del pago en VES.
+ * Ganancia realizada: USD obtenidos − Costo real en USD.
  * profit = usdCashReceived - (amountVESApplied / marketRate)
- * Si marketRate no se provee, usa bcvRateOnPayment (comportamiento anterior).
+ * usdCashReceived = efectivo neto (tras fees). Costo real = VES pagados ÷ tasa de mercado (o BCV).
  */
 export function calcProfitRealizedUSDWithMarket(params: {
   usdCashReceived: Decimal.Value;
