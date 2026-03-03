@@ -61,8 +61,9 @@ export default async function DashboardPage() {
       const opDayEnd = new Date(op.date);
       opDayEnd.setUTCHours(23, 59, 59, 999);
       const rateInfo = getRate(opDayEnd);
-      const bcvRate = rateInfo?.bcvRate ?? op.bcvRateOnCharge.toString();
-      const rateNum = Number(bcvRate);
+      // Costo real estimado = deuda VES ÷ tasa de mercado (fallback a BCV)
+      const marketRate = rateInfo?.marketRate ?? rateInfo?.bcvRate ?? op.bcvRateOnCharge.toString();
+      const rateNum = Number(marketRate);
       if (rateNum <= 0) continue;
       const debtUSDAtLastRate = debtVES.div(rateNum);
       const fees = calcFees({

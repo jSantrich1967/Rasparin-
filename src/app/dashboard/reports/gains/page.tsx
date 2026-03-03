@@ -30,6 +30,7 @@ type UnrealizedRow = {
   rateUsed: number;
   costUSD: number;
   profitUSD: number;
+  rateSource: "mercado" | "bcv";
 };
 
 export default async function GainsReportPage() {
@@ -106,7 +107,7 @@ export default async function GainsReportPage() {
 
     realizedProfitUSD = round2(realizedProfitUSD);
 
-    // Ganancia no realizada: OPEN valoradas con última tasa BCV (o bcvRateOnCharge si no hay FX)
+    // Ganancia no realizada: OPEN valoradas con tasa de mercado (costo real estimado = deuda VES ÷ tasa mercado)
     const unrealizedRows: UnrealizedRow[] = [];
     let unrealizedProfitUSD = d(0);
     for (const op of openOperations) {
@@ -117,8 +118,9 @@ export default async function GainsReportPage() {
       const opDayEnd = new Date(op.date);
       opDayEnd.setUTCHours(23, 59, 59, 999);
       const rateInfo = getRate(opDayEnd);
-      const bcvRate = rateInfo?.bcvRate ?? op.bcvRateOnCharge.toString();
-      const rateNum = Number(bcvRate);
+      // Costo real estimado = deuda VES ÷ tasa de mercado (fallback a BCV si no hay mercado)
+      const marketRate = rateInfo?.marketRate ?? rateInfo?.bcvRate ?? op.bcvRateOnCharge.toString();
+      const rateNum = Number(marketRate);
       if (rateNum <= 0) continue;
       const debtUSDAtLastRate = debtVES.div(rateNum);
       const fees = calcFees({
@@ -128,6 +130,7 @@ export default async function GainsReportPage() {
       });
       const profit = fees.usdCashReceived.sub(debtUSDAtLastRate);
       unrealizedProfitUSD = unrealizedProfitUSD.add(profit);
+      const usedMarket = rateInfo?.usedMarketRate ?? false;
       unrealizedRows.push({
         opId: op.id,
         opDate: new Date(op.date).toISOString().slice(0, 10),
@@ -138,6 +141,7 @@ export default async function GainsReportPage() {
         rateUsed: rateNum,
         costUSD: Number(debtUSDAtLastRate),
         profitUSD: Number(profit),
+        rateSource: usedMarket ? "mercado" : "bcv",
       });
     }
     unrealizedProfitUSD = round2(unrealizedProfitUSD);
@@ -164,10 +168,10 @@ export default async function GainsReportPage() {
             <div>
               <h3 className="text-sm font-semibold text-amber-400 mb-2">Fórmula ganancia no realizada</h3>
               <p className="text-slate-300 text-sm">
-                <strong>Ganancia = USD obtenidos − (Deuda VES ÷ tasa BCV)</strong>
+                <strong>Ganancia = USD obtenidos − (Deuda VES ÷ tasa de mercado)</strong>
               </p>
               <p className="text-slate-400 text-xs mt-2">
-                Para operaciones OPEN. Usa tasa BCV de la fecha de la operación (o bcvRateOnCharge si no hay FX cargado).
+                Para operaciones OPEN. El costo real estimado = deuda VES ÷ tasa de mercado (fallback a BCV si no hay mercado cargado).
               </p>
             </div>
           </div>
@@ -186,7 +190,7 @@ export default async function GainsReportPage() {
               <div className={`text-2xl font-bold mt-1 ${Number(unrealizedProfitUSD) >= 0 ? "text-amber-400" : "text-red-400"}`}>
                 {formatUSD(unrealizedProfitUSD)}
               </div>
-              <p className="text-xs text-slate-500 mt-1">OPEN valoradas con última tasa BCV</p>
+              <p className="text-xs text-slate-500 mt-1">OPEN valoradas con tasa de mercado</p>
             </div>
             <div className="rounded-2xl stitch-glass p-4 sm:p-5 border border-electric-blue/30">
               <div className="text-sm font-medium text-electric-blue">Total estimado</div>
@@ -274,7 +278,7 @@ export default async function GainsReportPage() {
                         <th className="text-left px-4 py-3 font-medium text-slate-400">Tarjeta</th>
                         <th className="text-right px-4 py-3 font-medium text-slate-400">USD obtenidos</th>
                         <th className="text-right px-4 py-3 font-medium text-slate-400">Deuda VES</th>
-                        <th className="text-right px-4 py-3 font-medium text-slate-400">Tasa BCV</th>
+                        <th className="text-right px-4 py-3 font-medium text-slate-400">Tasa usada</th>
                         <th className="text-right px-4 py-3 font-medium text-slate-400">Costo est. USD</th>
                         <th className="text-right px-4 py-3 font-medium text-slate-400">Ganancia USD</th>
                       </tr>
@@ -287,7 +291,11 @@ export default async function GainsReportPage() {
                           <td className="px-4 py-2.5 text-slate-400">{r.cardAlias}</td>
                           <td className="px-4 py-2.5 text-right text-emerald-accent">{formatUSD(r.usdObtained)}</td>
                           <td className="px-4 py-2.5 text-right text-slate-300">{formatVES(r.debtVES)}</td>
-                          <td className="px-4 py-2.5 text-right text-slate-400">{r.rateUsed.toFixed(2)}</td>
+                          <td className="px-4 py-2.5 text-right">
+                            <span className={r.rateSource === "mercado" ? "text-emerald-400" : "text-slate-400"}>
+                              {r.rateUsed.toFixed(2)} ({r.rateSource})
+                            </span>
+                          </td>
                           <td className="px-4 py-2.5 text-right text-slate-400">{formatUSD(r.costUSD)}</td>
                           <td className={`px-4 py-2.5 text-right font-semibold ${r.profitUSD >= 0 ? "text-amber-400" : "text-red-400"}`}>
                             {r.profitUSD >= 0 ? "+" : ""}{formatUSD(r.profitUSD)}
