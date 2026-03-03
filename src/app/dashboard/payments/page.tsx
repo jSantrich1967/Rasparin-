@@ -2,7 +2,6 @@ import { prisma } from "@/lib/prisma";
 import { PageSection } from "../PageSection";
 import { PaymentForm } from "./PaymentForm";
 import { PaymentRow } from "./PaymentRow";
-import { deletePayment, submitAllocations } from "./actions";
 
 export default async function PaymentsPage({
   searchParams,
@@ -50,14 +49,12 @@ export default async function PaymentsPage({
       ) : (
         <ul className="divide-y divide-white/10 rounded-2xl stitch-glass shadow-sm overflow-hidden">
           {payments.map((p) => (
-            <PaymentRow
-              key={p.id}
-              payment={p}
-              operationsOfCard={operationsByCard.get(p.cardId) ?? []}
-              deleteAction={deletePayment}
-              submitAllocations={submitAllocations}
-              defaultExpanded={expandPaymentId === p.id}
-            />
+          <PaymentRow
+            key={p.id}
+            payment={p}
+            operationsOfCard={operationsByCard.get(p.cardId) ?? []}
+            defaultExpanded={expandPaymentId === p.id}
+          />
           ))}
         </ul>
       )}

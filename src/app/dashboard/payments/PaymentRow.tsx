@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { formatVES, formatUSD } from "@/lib/money";
 import { calcDebtVES, calcFees } from "@/lib/calc";
 import { PaymentReconciliationForm } from "./PaymentReconciliationForm";
+import { deletePayment } from "./actions";
 
 type Payment = {
   id: string;
@@ -29,20 +30,13 @@ type Operation = {
   allocations: { amountVESApplied: { toString(): string }; paymentId: string }[];
 };
 
-type DeleteAction = (id: string) => Promise<{ ok: true } | { ok: false; message: string }>;
-type SubmitAllocationsAction = (formData: FormData) => Promise<{ ok: true } | { ok: false; message: string }>;
-
 export function PaymentRow({
   payment,
   operationsOfCard,
-  deleteAction,
-  submitAllocations,
   defaultExpanded = false,
 }: {
   payment: Payment;
   operationsOfCard: Operation[];
-  deleteAction: DeleteAction;
-  submitAllocations: SubmitAllocationsAction;
   defaultExpanded?: boolean;
 }) {
   const [expanded, setExpanded] = useState(defaultExpanded);
@@ -73,7 +67,7 @@ export function PaymentRow({
   function handleDelete() {
     if (!confirm("¿Eliminar este pago? Se eliminarán también sus asignaciones a operaciones.")) return;
     startTransition(async () => {
-      const result = await deleteAction(payment.id);
+      const result = await deletePayment(payment.id);
       if (result.ok) {
         toast.success("Pago eliminado");
         router.refresh();
@@ -155,7 +149,6 @@ export function PaymentRow({
             allocations: payment.allocations,
           }}
           operationsOfCard={operationsOfCard}
-          submitAllocations={submitAllocations}
         />
       )}
     </li>

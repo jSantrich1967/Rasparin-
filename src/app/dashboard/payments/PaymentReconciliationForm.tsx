@@ -6,6 +6,7 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 import { formatVES } from "@/lib/money";
 import { calcDebtVES } from "@/lib/calc";
+import { submitAllocations } from "./actions";
 
 type Operation = {
   id: string;
@@ -27,16 +28,12 @@ type PaymentDetail = {
   allocations: { operationId: string; amountVESApplied: { toString(): string } }[];
 };
 
-type SubmitAction = (formData: FormData) => Promise<{ ok: true } | { ok: false; message: string }>;
-
 export function PaymentReconciliationForm({
   paymentDetail,
   operationsOfCard,
-  submitAllocations,
 }: {
   paymentDetail: PaymentDetail;
   operationsOfCard: Operation[];
-  submitAllocations: SubmitAction;
 }) {
   const [isPending, startTransition] = useTransition();
   const [totalAssigned, setTotalAssigned] = useState(0);
