@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { getLastBcvRateForDate, buildRateLookup } from "@/lib/fx";
+import { buildRateLookup } from "@/lib/fx";
 import { calcDebtVES, calcFees, calcProfitRealizedUSDWithMarket } from "@/lib/calc";
 import { d, round2, formatUSD } from "@/lib/money";
 
@@ -57,10 +57,14 @@ export default async function DashboardPage() {
 
     let unrealizedProfitUSD = d(0);
     for (const op of openOperations) {
-      const lastRate = await getLastBcvRateForDate(op.date);
-      if (!lastRate) continue;
       const debtVES = calcDebtVES({ usdCharged: op.usdCharged.toString(), bcvRateOnCharge: op.bcvRateOnCharge.toString() });
-      const debtUSDAtLastRate = debtVES.div(lastRate.bcvRate);
+      const opDayEnd = new Date(op.date);
+      opDayEnd.setUTCHours(23, 59, 59, 999);
+      const rateInfo = getRate(opDayEnd);
+      const bcvRate = rateInfo?.bcvRate ?? op.bcvRateOnCharge.toString();
+      const rateNum = Number(bcvRate);
+      if (rateNum <= 0) continue;
+      const debtUSDAtLastRate = debtVES.div(rateNum);
       const fees = calcFees({
         usdCharged: op.usdCharged.toString(),
         bankFeePercent: op.bankFeePercent.toString(),

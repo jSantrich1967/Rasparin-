@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { PageSection } from "../../PageSection";
-import { getLastBcvRateForDate, buildRateLookup } from "@/lib/fx";
+import { buildRateLookup } from "@/lib/fx";
 import { calcDebtVES, calcFees, calcProfitRealizedUSDWithMarket } from "@/lib/calc";
 import { d, round2, formatUSD, formatVES } from "@/lib/money";
 
@@ -20,6 +20,18 @@ type GainsRow = {
   rateSource: "mercado" | "bcv";
 };
 
+type UnrealizedRow = {
+  opId: string;
+  opDate: string;
+  counterpartyName: string;
+  cardAlias: string;
+  usdObtained: number;
+  debtVES: number;
+  rateUsed: number;
+  costUSD: number;
+  profitUSD: number;
+};
+
 export default async function GainsReportPage() {
   try {
     const [allocationsWithDetails, openOperations, allFxRates] = await Promise.all([
@@ -28,7 +40,7 @@ export default async function GainsReportPage() {
       }),
       prisma.operation.findMany({
         where: { status: "OPEN" },
-        include: { counterparty: true },
+        include: { counterparty: true, card: true },
       }),
       prisma.fXRate.findMany({ orderBy: { date: "desc" }, take: 365 }),
     ]);
@@ -94,22 +106,39 @@ export default async function GainsReportPage() {
 
     realizedProfitUSD = round2(realizedProfitUSD);
 
-    // Ganancia no realizada: OPEN valoradas con última tasa BCV
+    // Ganancia no realizada: OPEN valoradas con última tasa BCV (o bcvRateOnCharge si no hay FX)
+    const unrealizedRows: UnrealizedRow[] = [];
     let unrealizedProfitUSD = d(0);
     for (const op of openOperations) {
-      const lastRate = await getLastBcvRateForDate(op.date);
-      if (!lastRate) continue;
       const debtVES = calcDebtVES({
         usdCharged: op.usdCharged.toString(),
         bcvRateOnCharge: op.bcvRateOnCharge.toString(),
       });
-      const debtUSDAtLastRate = debtVES.div(lastRate.bcvRate);
+      const opDayEnd = new Date(op.date);
+      opDayEnd.setUTCHours(23, 59, 59, 999);
+      const rateInfo = getRate(opDayEnd);
+      const bcvRate = rateInfo?.bcvRate ?? op.bcvRateOnCharge.toString();
+      const rateNum = Number(bcvRate);
+      if (rateNum <= 0) continue;
+      const debtUSDAtLastRate = debtVES.div(rateNum);
       const fees = calcFees({
         usdCharged: op.usdCharged.toString(),
         bankFeePercent: op.bankFeePercent.toString(),
         merchantFeePercent: op.merchantFeePercent.toString(),
       });
-      unrealizedProfitUSD = unrealizedProfitUSD.add(fees.usdCashReceived.sub(debtUSDAtLastRate));
+      const profit = fees.usdCashReceived.sub(debtUSDAtLastRate);
+      unrealizedProfitUSD = unrealizedProfitUSD.add(profit);
+      unrealizedRows.push({
+        opId: op.id,
+        opDate: new Date(op.date).toISOString().slice(0, 10),
+        counterpartyName: op.counterparty.name,
+        cardAlias: op.card.alias,
+        usdObtained: Number(fees.usdCashReceived),
+        debtVES: Number(debtVES),
+        rateUsed: rateNum,
+        costUSD: Number(debtUSDAtLastRate),
+        profitUSD: Number(profit),
+      });
     }
     unrealizedProfitUSD = round2(unrealizedProfitUSD);
 
@@ -121,15 +150,26 @@ export default async function GainsReportPage() {
         description="Cálculo de ganancia realizada (conciliada) y no realizada (OPEN). Incluye desglose por asignación."
       >
         <div className="space-y-6">
-          {/* Fórmula explicada */}
-          <div className="rounded-2xl stitch-glass p-4 sm:p-5 border border-electric-blue/20">
-            <h3 className="text-sm font-semibold text-electric-blue mb-2">Fórmula de ganancia realizada</h3>
-            <p className="text-slate-300 text-sm">
-              <strong>Ganancia = USD obtenidos − Costo real en USD</strong>
-            </p>
-            <p className="text-slate-400 text-xs mt-2">
-              USD obtenidos = efectivo neto (tras fees) de la operación. Costo real en USD = VES asignados ÷ tasa de mercado (o BCV si no hay mercado).
-            </p>
+          {/* Fórmulas explicadas */}
+          <div className="rounded-2xl stitch-glass p-4 sm:p-5 border border-electric-blue/20 space-y-4">
+            <div>
+              <h3 className="text-sm font-semibold text-electric-blue mb-2">Fórmula ganancia realizada</h3>
+              <p className="text-slate-300 text-sm">
+                <strong>Ganancia = USD obtenidos − Costo real en USD</strong>
+              </p>
+              <p className="text-slate-400 text-xs mt-2">
+                USD obtenidos = efectivo neto (tras fees). Costo real = VES asignados ÷ tasa de mercado (o BCV).
+              </p>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-amber-400 mb-2">Fórmula ganancia no realizada</h3>
+              <p className="text-slate-300 text-sm">
+                <strong>Ganancia = USD obtenidos − (Deuda VES ÷ tasa BCV)</strong>
+              </p>
+              <p className="text-slate-400 text-xs mt-2">
+                Para operaciones OPEN. Usa tasa BCV de la fecha de la operación (o bcvRateOnCharge si no hay FX cargado).
+              </p>
+            </div>
           </div>
 
           {/* Resumen */}
@@ -207,6 +247,61 @@ export default async function GainsReportPage() {
                         </td>
                         <td className={`px-4 py-3 text-right font-bold ${Number(realizedProfitUSD) >= 0 ? "text-emerald-accent" : "text-red-400"}`}>
                           {formatUSD(realizedProfitUSD)}
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Tabla detalle ganancia no realizada */}
+          <div>
+            <h3 className="text-sm font-semibold text-slate-300 mb-3">Desglose por operación OPEN (ganancia no realizada)</h3>
+            {unrealizedRows.length === 0 ? (
+              <div className="rounded-2xl stitch-glass p-6 text-center text-slate-400">
+                No hay operaciones OPEN. La ganancia no realizada se calcula sobre operaciones pendientes de pagar.
+              </div>
+            ) : (
+              <div className="rounded-2xl stitch-glass overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-white/5 border-b border-white/10">
+                        <th className="text-left px-4 py-3 font-medium text-slate-400">Fecha op.</th>
+                        <th className="text-left px-4 py-3 font-medium text-slate-400">Contraparte</th>
+                        <th className="text-left px-4 py-3 font-medium text-slate-400">Tarjeta</th>
+                        <th className="text-right px-4 py-3 font-medium text-slate-400">USD obtenidos</th>
+                        <th className="text-right px-4 py-3 font-medium text-slate-400">Deuda VES</th>
+                        <th className="text-right px-4 py-3 font-medium text-slate-400">Tasa BCV</th>
+                        <th className="text-right px-4 py-3 font-medium text-slate-400">Costo est. USD</th>
+                        <th className="text-right px-4 py-3 font-medium text-slate-400">Ganancia USD</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {unrealizedRows.map((r) => (
+                        <tr key={r.opId} className="border-b border-white/5 hover:bg-white/5">
+                          <td className="px-4 py-2.5 font-mono text-slate-500">{r.opDate}</td>
+                          <td className="px-4 py-2.5 text-white">{r.counterpartyName}</td>
+                          <td className="px-4 py-2.5 text-slate-400">{r.cardAlias}</td>
+                          <td className="px-4 py-2.5 text-right text-emerald-accent">{formatUSD(r.usdObtained)}</td>
+                          <td className="px-4 py-2.5 text-right text-slate-300">{formatVES(r.debtVES)}</td>
+                          <td className="px-4 py-2.5 text-right text-slate-400">{r.rateUsed.toFixed(2)}</td>
+                          <td className="px-4 py-2.5 text-right text-slate-400">{formatUSD(r.costUSD)}</td>
+                          <td className={`px-4 py-2.5 text-right font-semibold ${r.profitUSD >= 0 ? "text-amber-400" : "text-red-400"}`}>
+                            {r.profitUSD >= 0 ? "+" : ""}{formatUSD(r.profitUSD)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot>
+                      <tr className="bg-white/10 font-semibold border-t-2 border-white/20">
+                        <td className="px-4 py-3 text-slate-300" colSpan={7}>
+                          Total ganancia no realizada ({unrealizedRows.length} operaciones OPEN)
+                        </td>
+                        <td className={`px-4 py-3 text-right font-bold ${Number(unrealizedProfitUSD) >= 0 ? "text-amber-400" : "text-red-400"}`}>
+                          {formatUSD(unrealizedProfitUSD)}
                         </td>
                       </tr>
                     </tfoot>
