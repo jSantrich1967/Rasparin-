@@ -74,6 +74,7 @@ export default async function DashboardPage() {
       unrealizedProfitUSD = unrealizedProfitUSD.add(fees.usdCashReceived.sub(debtUSDAtLastRate));
     }
     unrealizedProfitUSD = round2(unrealizedProfitUSD);
+    const totalProfitUSD = realizedProfitUSD.add(unrealizedProfitUSD);
 
     return (
       <main>
@@ -85,8 +86,27 @@ export default async function DashboardPage() {
         <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-6">
           <Link href="/dashboard/reports/gains" className="rounded-2xl stitch-glass p-4 sm:p-5 hover:bg-white/5 transition-colors block order-first border-electric-blue/30">
             <div className="text-sm font-medium text-electric-blue">Ganancias</div>
-            <div className="text-xl font-bold mt-1 text-white">Reporte + Cálculo</div>
-            <p className="text-xs text-slate-400 mt-1">Desglose realizado / no realizado</p>
+            <div className="mt-2 space-y-1">
+              <div className="flex justify-between items-center">
+                <span className="text-[11px] text-slate-500">Realizada</span>
+                <span className={`font-bold ${Number(realizedProfitUSD) >= 0 ? "text-emerald-accent" : "text-red-400"}`}>
+                  {formatUSD(realizedProfitUSD)}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-[11px] text-slate-500">No realizada</span>
+                <span className={`font-bold ${Number(unrealizedProfitUSD) >= 0 ? "text-amber-400" : "text-red-400"}`}>
+                  {formatUSD(unrealizedProfitUSD)}
+                </span>
+              </div>
+              <div className="flex justify-between items-center pt-1 border-t border-white/10">
+                <span className="text-[11px] text-slate-400">Total</span>
+                <span className={`font-bold ${Number(totalProfitUSD) >= 0 ? "text-white" : "text-red-400"}`}>
+                  {formatUSD(totalProfitUSD)}
+                </span>
+              </div>
+            </div>
+            <p className="text-xs text-slate-400 mt-2">Ver reporte detallado →</p>
           </Link>
           <Link href="/dashboard/reports" className="rounded-2xl stitch-glass p-4 sm:p-5 hover:bg-white/5 transition-colors block">
             <div className="text-sm font-medium text-slate-500">Reportes</div>
@@ -120,7 +140,7 @@ export default async function DashboardPage() {
             <div className={`text-2xl font-bold mt-1 ${Number(unrealizedProfitUSD) >= 0 ? "text-amber-400" : "text-red-400"}`}>
               {formatUSD(unrealizedProfitUSD)}
             </div>
-            <p className="text-xs text-slate-500 mt-1">OPEN valoradas con última tasa BCV</p>
+            <p className="text-xs text-slate-500 mt-1">OPEN valoradas con tasa de mercado</p>
           </div>
         </div>
 
