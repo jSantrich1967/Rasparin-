@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export default async function StitchPage() {
   try {
-    const [openOperations, allocationsWithDetails, latestRate, fxRatesRecent, recentOps, allFxRates] = await Promise.all([
+    const [openOperations, allocationsWithDetails, latestRate, fxRatesRecent, recentOps, allFxRates, allOpsNonCancelled, allPayments] = await Promise.all([
       prisma.operation.findMany({
         where: { status: "OPEN" },
         include: { counterparty: true },
@@ -24,7 +24,9 @@ export default async function StitchPage() {
         orderBy: { date: "desc" },
         take: 5,
       }),
-      prisma.fXRate.findMany({ take: 365 }),
+      prisma.fXRate.findMany({ orderBy: { date: "desc" }, take: 365 }),
+      prisma.operation.findMany({ where: { status: { not: "CANCELLED" } } }),
+      prisma.payment.findMany(),
     ]);
 
     // Deuda total pendiente (OPEN): suma de usdCharged y debtVES
@@ -46,8 +48,46 @@ export default async function StitchPage() {
     totalDebtVES = round2(totalDebtVES);
     totalNetUsdReceived = round2(totalNetUsdReceived);
 
-    // Ganancia realizada (usa tasa de mercado si existe; si no, BCV)
+    // Operaciones USD: total cargado en operaciones (OPEN + SETTLED)
+    let totalOperationsUSD = d(0);
+    let totalUsdObtained = d(0);
+    for (const op of allOpsNonCancelled) {
+      totalOperationsUSD = totalOperationsUSD.add(op.usdCharged);
+      const fees = calcFees({
+        usdCharged: op.usdCharged.toString(),
+        bankFeePercent: op.bankFeePercent.toString(),
+        merchantFeePercent: op.merchantFeePercent.toString(),
+      });
+      totalUsdObtained = totalUsdObtained.add(fees.usdCashReceived);
+    }
+    totalOperationsUSD = round2(totalOperationsUSD);
+    totalUsdObtained = round2(totalUsdObtained);
+
+    // USD Pagados: total pagado a la tarjeta (VES / tasa BCV por pago)
+    let totalUsdPaid = d(0);
+    for (const p of allPayments) {
+      const bcv = Number(p.bcvRateOnPayment.toString());
+      if (bcv > 0) totalUsdPaid = totalUsdPaid.add(d(p.amountVES.toString()).div(bcv));
+    }
+    totalUsdPaid = round2(totalUsdPaid);
+
+    // USD a Mercado: total pagado en USD a tasa de mercado (VES / marketRate por pago)
     const getRate = buildRateLookup(allFxRates);
+    let totalUsdAtMarket = d(0);
+    for (const p of allPayments) {
+      const rate = p.marketRate?.toString()
+        ?? (() => {
+          const dayEnd = new Date(p.date);
+          dayEnd.setUTCHours(23, 59, 59, 999);
+          const info = getRate(dayEnd);
+          return info?.marketRate ?? info?.bcvRate ?? p.bcvRateOnPayment.toString();
+        })();
+      const r = Number(rate);
+      if (r > 0) totalUsdAtMarket = totalUsdAtMarket.add(d(p.amountVES.toString()).div(r));
+    }
+    totalUsdAtMarket = round2(totalUsdAtMarket);
+
+    // Ganancia realizada (usa tasa de mercado si existe; si no, BCV)
     let realizedProfitUSD = d(0);
     for (const a of allocationsWithDetails) {
       const op = a.operation;
@@ -120,6 +160,10 @@ export default async function StitchPage() {
         totalDebtUSD={Number(totalDebtUSD)}
         totalDebtVES={Number(totalDebtVES)}
         totalNetUsdReceived={Number(totalNetUsdReceived)}
+        totalOperationsUSD={Number(totalOperationsUSD)}
+        totalUsdPaid={Number(totalUsdPaid)}
+        totalUsdObtained={Number(totalUsdObtained)}
+        totalUsdAtMarket={Number(totalUsdAtMarket)}
         bcvRate={bcvRate}
         marketRate={marketRate}
         realizedProfitUSD={Number(realizedProfitUSD)}

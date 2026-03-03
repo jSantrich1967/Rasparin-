@@ -36,7 +36,6 @@ export async function createPayment(formData: FormData): Promise<{ ok: true } | 
       },
     });
     revalidatePath("/dashboard/payments");
-    revalidatePath("/dashboard/reconciliation");
     revalidatePath("/dashboard");
     revalidatePath("/stitch");
     return { ok: true };
@@ -51,7 +50,6 @@ export async function deletePayment(id: string): Promise<{ ok: true } | { ok: fa
   try {
     await prisma.payment.delete({ where: { id } });
     revalidatePath("/dashboard/payments");
-    revalidatePath("/dashboard/reconciliation");
     revalidatePath("/dashboard");
     return { ok: true };
   } catch (e) {
@@ -78,8 +76,6 @@ export async function submitAllocations(formData: FormData): Promise<{ ok: true 
   const result = await applyAllocations({ paymentId, items, marketRate });
   if (result.ok) {
     revalidatePath("/dashboard/payments");
-    revalidatePath("/dashboard/reconciliation");
-    revalidatePath(`/dashboard/reconciliation?payment=${paymentId}`);
     revalidatePath("/dashboard");
     revalidatePath("/stitch");
   }

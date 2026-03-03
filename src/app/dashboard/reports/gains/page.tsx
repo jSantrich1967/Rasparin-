@@ -162,7 +162,7 @@ export default async function GainsReportPage() {
             <h3 className="text-sm font-semibold text-slate-300 mb-3">Desglose por asignación (ganancia realizada)</h3>
             {realizedRows.length === 0 ? (
               <div className="rounded-2xl stitch-glass p-6 text-center text-slate-400">
-                No hay asignaciones conciliadas. La ganancia realizada se genera al asignar pagos en Conciliación.
+                No hay asignaciones. La ganancia realizada se genera al asignar pagos a operaciones en la página de Pagos (clic en «Asignar a deudas» en cada pago).
               </div>
             ) : (
               <div className="rounded-2xl stitch-glass overflow-hidden">

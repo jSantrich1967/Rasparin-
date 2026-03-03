@@ -15,7 +15,6 @@ const navItems = [
   { href: "/dashboard/counterparties", label: "Contrapartes" },
   { href: "/dashboard/operations", label: "Operaciones" },
   { href: "/dashboard/payments", label: "Pagos" },
-  { href: "/dashboard/reconciliation", label: "Conciliación" },
   { href: "/dashboard/backup", label: "Respaldo" },
 ];
 

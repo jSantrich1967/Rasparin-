@@ -128,7 +128,6 @@ export default async function DashboardPage() {
             <Link href="/dashboard/counterparties" className="rounded-lg stitch-glass px-4 py-2 text-sm font-medium text-slate-300 hover:bg-white/5 transition-colors">Contrapartes</Link>
             <Link href="/dashboard/operations" className="rounded-lg stitch-glass px-4 py-2 text-sm font-medium text-slate-300 hover:bg-white/5 transition-colors">Operaciones</Link>
             <Link href="/dashboard/payments" className="rounded-lg stitch-glass px-4 py-2 text-sm font-medium text-slate-300 hover:bg-white/5 transition-colors">Pagos</Link>
-            <Link href="/dashboard/reconciliation" className="rounded-lg stitch-glass px-4 py-2 text-sm font-medium text-slate-300 hover:bg-white/5 transition-colors">Conciliación</Link>
             <Link href="/dashboard/backup" className="rounded-lg stitch-glass px-4 py-2 text-sm font-medium text-slate-300 hover:bg-white/5 transition-colors">Respaldo</Link>
           </div>
         </div>

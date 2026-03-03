@@ -104,7 +104,7 @@ export function PaymentReconciliationForm({
       try {
         const result = await submitAllocations(formData);
         if (result.ok) {
-          toast.success("Conciliación guardada");
+          toast.success("Asignación guardada");
           router.refresh();
         } else {
           toast.error(result.message);
@@ -203,7 +203,7 @@ export function PaymentReconciliationForm({
               </label>
             </div>
             <button type="submit" disabled={isPending || totalAssigned > paymentTotal} className="btn-primary text-sm py-1.5 px-3">
-              {isPending ? "Guardando…" : "Guardar conciliación"}
+              {isPending ? "Guardando…" : "Guardar asignación"}
             </button>
           </>
         )}

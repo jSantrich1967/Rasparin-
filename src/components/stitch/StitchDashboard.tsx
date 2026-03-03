@@ -7,6 +7,10 @@ export type StitchDashboardProps = {
   totalDebtUSD: number;
   totalDebtVES: number;
   totalNetUsdReceived: number;
+  totalOperationsUSD?: number;
+  totalUsdPaid?: number;
+  totalUsdObtained?: number;
+  totalUsdAtMarket?: number;
   bcvRate: number;
   marketRate?: number;
   realizedProfitUSD: number;
@@ -23,6 +27,10 @@ export function StitchDashboard({
   totalDebtUSD,
   totalDebtVES,
   totalNetUsdReceived,
+  totalOperationsUSD = 0,
+  totalUsdPaid = 0,
+  totalUsdObtained = 0,
+  totalUsdAtMarket = 0,
   bcvRate,
   marketRate = 0,
   realizedProfitUSD,
@@ -119,6 +127,29 @@ export function StitchDashboard({
                 <path d="M0,45 C20,40 40,55 60,45 C80,35 100,50 120,40 C140,30 160,50 180,35 C200,20 220,40 240,25 C260,10 280,30 300,15" fill="none" stroke="#007AFF" strokeLinecap="round" strokeWidth={2} />
               </svg>
             </div>
+          </div>
+        </section>
+
+        <section className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="glass-card rounded-2xl p-4">
+            <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-1">Operaciones USD</p>
+            <h3 className="text-xl font-bold text-white">{formatUSD(totalOperationsUSD)}</h3>
+            <p className="text-slate-500 text-[9px] mt-0.5">Total cargado en ops</p>
+          </div>
+          <div className="glass-card rounded-2xl p-4">
+            <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-1">USD Pagados</p>
+            <h3 className="text-xl font-bold text-electric-blue">{formatUSD(totalUsdPaid)}</h3>
+            <p className="text-slate-500 text-[9px] mt-0.5">A la tarjeta (BCV)</p>
+          </div>
+          <div className="glass-card rounded-2xl p-4">
+            <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-1">USD Obtenidos</p>
+            <h3 className="text-xl font-bold text-emerald-accent">{formatUSD(totalUsdObtained)}</h3>
+            <p className="text-slate-500 text-[9px] mt-0.5">Efectivo neto (post-fees)</p>
+          </div>
+          <div className="glass-card rounded-2xl p-4">
+            <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-1">USD a Mercado</p>
+            <h3 className="text-xl font-bold text-amber-400">{formatUSD(totalUsdAtMarket)}</h3>
+            <p className="text-slate-500 text-[9px] mt-0.5">Pagados a tasa mercado</p>
           </div>
         </section>
 
